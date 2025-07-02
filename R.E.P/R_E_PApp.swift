@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Firebase
 
 //@main
 //struct R_E_PApp: App {
@@ -32,9 +33,14 @@ import SwiftData
 //}
 
 import SwiftUI
+import Firebase
 
 @main
 struct REPApp: App {
+    init() {
+        FirebaseApp.configure()
+    }
+    
     var body: some Scene {
         WindowGroup {
             MainTabView()

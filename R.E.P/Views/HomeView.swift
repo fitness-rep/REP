@@ -9,6 +9,8 @@ import SwiftUI
 import AVKit
 
 struct HomeView: View {
+    @State private var showSignIn = false
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -20,10 +22,17 @@ struct HomeView: View {
                         .frame(height: 400)
 
                     NavigationLink("Get Started with R.E.P", destination: GenderSelectionView().environmentObject(RegistrationData()))
-                    NavigationLink("Already have an account? Sign In", destination: GenderSelectionView())
+                    
+                    Button("Already have an account? Sign In") {
+                        showSignIn = true
+                    }
+                    .foregroundColor(.blue)
                 }
                 .padding()
             }
+        }
+        .sheet(isPresented: $showSignIn) {
+            SignInView()
         }
     }
 }
