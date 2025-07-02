@@ -52,7 +52,7 @@ struct FaceIDSetupView: View {
                 // Action Buttons
                 VStack(spacing: 15) {
                     Button(action: enableFaceID) {
-                        HStack {
+                        HStack(spacing: 12) {
                             if isSettingUp {
                                 ProgressView()
                                     .progressViewStyle(CircularProgressViewStyle(tint: .white))
@@ -60,17 +60,27 @@ struct FaceIDSetupView: View {
                             } else {
                                 Image(systemName: "faceid")
                                     .font(.title2)
+                                    .fontWeight(.semibold)
                             }
                             Text(isSettingUp ? "Setting up..." : "Enable Face ID")
                                 .font(.headline)
+                                .fontWeight(.semibold)
                         }
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(12)
+                        .padding(.vertical, 18)
+                        .background(
+                            LinearGradient(
+                                gradient: Gradient(colors: [Color.blue, Color.purple]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .cornerRadius(16)
+                        .shadow(color: .purple.opacity(0.3), radius: 8, x: 0, y: 4)
                     }
                     .disabled(isSettingUp)
+                    .buttonStyle(HomeButtonStyle())
                     .padding(.horizontal)
                     
                     Button("Skip for now") {

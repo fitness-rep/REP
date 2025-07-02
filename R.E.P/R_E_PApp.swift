@@ -37,6 +37,7 @@ import Firebase
 
 @main
 struct REPApp: App {
+    @StateObject private var authViewModel = AuthViewModel()
     init() {
         // Configure Firebase with error handling
         do {
@@ -49,7 +50,22 @@ struct REPApp: App {
     
     var body: some Scene {
         WindowGroup {
-            MainTabView()
+            RootAuthView()
+                .environmentObject(authViewModel)
+        }
+    }
+}
+
+struct RootAuthView: View {
+    @EnvironmentObject var authViewModel: AuthViewModel
+    var body: some View {
+        NavigationStack {
+            let _ = print("isAuthenticated: \(authViewModel.isAuthenticated)")
+            if authViewModel.isAuthenticated {
+                HomeDashboardView()
+            } else {
+                HomeView()
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ import FirebaseAuth
 import LocalAuthentication
 
 class FirebaseAuthManager: ObservableObject {
+    static let shared = FirebaseAuthManager()
     @Published var currentUser: User?
     @Published var isAuthenticated = false
     @Published var isLoading = false
@@ -62,6 +63,7 @@ class FirebaseAuthManager: ObservableObject {
                 self.isAuthenticated = true
                 self.isLoading = false
             }
+            let _ = print("is authenticated1: \(isAuthenticated)")
             return true
         } catch {
             await MainActor.run {
