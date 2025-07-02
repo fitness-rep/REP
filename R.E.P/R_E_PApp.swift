@@ -38,7 +38,13 @@ import Firebase
 @main
 struct REPApp: App {
     init() {
-        FirebaseApp.configure()
+        // Configure Firebase with error handling
+        do {
+            FirebaseApp.configure()
+        } catch {
+            print("Firebase configuration failed: \(error)")
+            // Continue without Firebase for now
+        }
     }
     
     var body: some Scene {

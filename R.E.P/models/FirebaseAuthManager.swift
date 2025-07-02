@@ -16,22 +16,42 @@ class FirebaseAuthManager: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     
-    private let auth = Auth.auth()
+    private let auth: Auth
     private let keychainService = "com.rep.app.firebase"
+    private let isFirebaseAvailable: Bool
     
     init() {
-        // Listen for authentication state changes
-        auth.addStateDidChangeListener { [weak self] _, user in
-            DispatchQueue.main.async {
-                self?.currentUser = user
-                self?.isAuthenticated = user != nil
+        // Check if Firebase is properly configured
+        if FirebaseApp.app() != nil {
+            self.auth = Auth.auth()
+            self.isFirebaseAvailable = true
+            
+            // Listen for authentication state changes
+            auth.addStateDidChangeListener { [weak self] _, user in
+                DispatchQueue.main.async {
+                    self?.currentUser = user
+                    self?.isAuthenticated = user != nil
+                }
             }
+        } else {
+            // Firebase not configured, create a dummy auth instance
+            self.auth = Auth.auth()
+            self.isFirebaseAvailable = false
+            print("Warning: Firebase not configured. Authentication features will not work.")
         }
     }
     
     // MARK: - Email/Password Authentication
     
     func signIn(email: String, password: String) async throws -> Bool {
+        guard isFirebaseAvailable else {
+            await MainActor.run {
+                self.errorMessage = "Firebase is not configured. Please set up Firebase properly."
+                self.isLoading = false
+            }
+            throw NSError(domain: "FirebaseAuth", code: -1, userInfo: [NSLocalizedDescriptionKey: "Firebase not configured"])
+        }
+        
         isLoading = true
         errorMessage = nil
         
@@ -53,6 +73,14 @@ class FirebaseAuthManager: ObservableObject {
     }
     
     func signUp(email: String, password: String) async throws -> Bool {
+        guard isFirebaseAvailable else {
+            await MainActor.run {
+                self.errorMessage = "Firebase is not configured. Please set up Firebase properly."
+                self.isLoading = false
+            }
+            throw NSError(domain: "FirebaseAuth", code: -1, userInfo: [NSLocalizedDescriptionKey: "Firebase not configured"])
+        }
+        
         isLoading = true
         errorMessage = nil
         
@@ -84,6 +112,14 @@ class FirebaseAuthManager: ObservableObject {
     }
     
     func resetPassword(email: String) async throws {
+        guard isFirebaseAvailable else {
+            await MainActor.run {
+                self.errorMessage = "Firebase is not configured. Please set up Firebase properly."
+                self.isLoading = false
+            }
+            throw NSError(domain: "FirebaseAuth", code: -1, userInfo: [NSLocalizedDescriptionKey: "Firebase not configured"])
+        }
+        
         isLoading = true
         errorMessage = nil
         
@@ -226,6 +262,9 @@ class FirebaseAuthManager: ObservableObject {
     // MARK: - User Data Management
     
     func saveUserData(_ userData: [String: Any]) async throws {
+        guard isFirebaseAvailable else {
+            throw NSError(domain: "FirebaseAuth", code: -1, userInfo: [NSLocalizedDescriptionKey: "Firebase not configured"])
+        }
         guard let user = currentUser else { return }
         
         let db = Firestore.firestore()
@@ -233,6 +272,9 @@ class FirebaseAuthManager: ObservableObject {
     }
     
     func getUserData() async throws -> [String: Any]? {
+        guard isFirebaseAvailable else {
+            throw NSError(domain: "FirebaseAuth", code: -1, userInfo: [NSLocalizedDescriptionKey: "Firebase not configured"])
+        }
         guard let user = currentUser else { return nil }
         
         let db = Firestore.firestore()
