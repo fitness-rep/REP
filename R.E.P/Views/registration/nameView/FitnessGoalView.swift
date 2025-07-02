@@ -31,7 +31,7 @@ struct FitnessGoalView: View {
             }
             .padding(.horizontal)
             Spacer()
-            NavigationLink(destination: Text("Next Screen Placeholder"), isActive: $navigateToNext) {
+            NavigationLink(destination: StrengthExperienceView(), isActive: $navigateToNext) {
                 EmptyView()
             }
         }
