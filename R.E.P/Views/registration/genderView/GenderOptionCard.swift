@@ -11,19 +11,23 @@ struct GenderOptionCard: View {
     let isSelected: Bool
 
     var body: some View {
-        VStack {
+        ZStack {
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .fill(Color(.systemGray6).opacity(0.12))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 28, style: .continuous)
+                        .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 3)
+                )
+                .shadow(color: isSelected ? Color.blue.opacity(0.18) : Color.black.opacity(0.08), radius: isSelected ? 12 : 6, x: 0, y: 4)
+            
             Image(gender == .male ? "male_avatar" : "female_avatar")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 100, height: 100)
-                .padding()
-                .background(isSelected ? Color.blue.opacity(0.2) : Color.gray.opacity(0.1))
-                .cornerRadius(12)
-
-            Text(gender == .male ? "Male" : "Female")
-                .fontWeight(isSelected ? .bold : .regular)
-                .foregroundColor(isSelected ? .blue : .primary)
+                .frame(width: 140, height: 220)
+                .padding(.vertical, 16)
         }
+        .frame(width: 180, height: 280)
+        .padding(4)
     }
 }
 
