@@ -10,22 +10,23 @@ import LocalAuthentication
 
 struct SignInView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
+    @Environment(\.dismiss) private var dismiss
     @State private var email = ""
     @State private var password = ""
     @State private var rememberCredentials = false
-    @State private var isSignUp = false
     @State private var showAlert = false
     @State private var alertMessage = ""
+    @State private var navigateToDashboard = false
     
     var body: some View {
         NavigationStack {
             VStack(spacing: 30) {
                 // Header
                 VStack(spacing: 10) {
-                    Text(isSignUp ? "Create Account" : "Welcome Back!")
+                    Text("Welcome Back!")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                    Text(isSignUp ? "Sign up for your R.E.P account" : "Sign in to your R.E.P account")
+                    Text("Sign in to your R.E.P account")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
@@ -52,16 +53,14 @@ struct SignInView: View {
                         SecureField("Enter your password", text: $password)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                     }
-                    // Remember Credentials Option (only for sign in)
-                    if !isSignUp {
-                        Toggle("Save credentials securely", isOn: $rememberCredentials)
-                            .font(.subheadline)
-                            .padding(.vertical, 5)
-                    }
+                    // Remember Credentials Option
+                    Toggle("Save credentials securely", isOn: $rememberCredentials)
+                        .font(.subheadline)
+                        .padding(.vertical, 5)
                 }
                 .padding(.horizontal)
                 
-                // Sign In/Up Button
+                // Sign In Button
                 Button(action: authenticateUser) {
                     HStack(spacing: 12) {
                         if authViewModel.isLoading {
@@ -69,10 +68,10 @@ struct SignInView: View {
                                 .progressViewStyle(CircularProgressViewStyle(tint: .white))
                                 .scaleEffect(0.8)
                         } else {
-                            Image(systemName: isSignUp ? "person.badge.plus" : "person.circle")
+                            Image(systemName: "person.circle")
                                 .font(.title2)
                                 .fontWeight(.semibold)
-                            Text(isSignUp ? "Sign Up" : "Sign In")
+                            Text("Sign In")
                                 .font(.headline)
                                 .fontWeight(.semibold)
                         }
@@ -94,30 +93,39 @@ struct SignInView: View {
                 .buttonStyle(HomeButtonStyle())
                 .padding(.horizontal)
                 
-                // Forgot Password (only for sign in)
-                if !isSignUp {
-                    Button("Forgot Password?") {
-                        alertMessage = "Password reset is not implemented in this demo."
-                        showAlert = true
-                    }
-                    .font(.subheadline)
-                    .foregroundColor(.blue)
-                }
-                // Toggle between Sign In and Sign Up
-                Button(isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up") {
-                    isSignUp.toggle()
+                // Forgot Password
+                Button("Forgot Password?") {
+                    alertMessage = "Password reset is not implemented in this demo."
+                    showAlert = true
                 }
                 .font(.subheadline)
                 .foregroundColor(.blue)
                 Spacer()
             }
             .padding()
-            .navigationTitle(isSignUp ? "Sign Up" : "Sign In")
+            .navigationTitle("Sign In")
             .navigationBarTitleDisplayMode(.inline)
-            .alert(isSignUp ? "Sign Up" : "Sign In", isPresented: $showAlert) {
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: { dismiss() }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 16, weight: .semibold))
+                            Text("Back")
+                                .font(.system(size: 16, weight: .medium))
+                        }
+                        .foregroundColor(.blue)
+                    }
+                }
+            }
+            .alert("Sign In", isPresented: $showAlert) {
                 Button("OK") { }
             } message: {
                 Text(alertMessage)
+            }
+            .navigationDestination(isPresented: $navigateToDashboard) {
+                HomeDashboardView()
             }
         }
     }
@@ -125,11 +133,9 @@ struct SignInView: View {
     private func authenticateUser() {
         Task {
             do {
-                if isSignUp {
-                    try await authViewModel.signUp(email: email, password: password)
-                } else {
-                    try await authViewModel.signIn(email: email, password: password)
-                    let _ = print("is authenticated2: \(authViewModel.isAuthenticated)")
+                try await authViewModel.signIn(email: email, password: password)
+                await MainActor.run {
+                    navigateToDashboard = true
                 }
             } catch {
                 await MainActor.run {

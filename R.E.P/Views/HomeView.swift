@@ -93,29 +93,7 @@ struct HomeView: View {
                             }
                             .buttonStyle(HomeButtonStyle())
                             
-                            // Sign Out Button
-                            Button(action: {
-                                authViewModel.signOut()
-                            }) {
-                                HStack(spacing: 12) {
-                                    Image(systemName: "arrow.backward.square")
-                                        .font(.title2)
-                                        .fontWeight(.semibold)
-                                    Text("Sign Out")
-                                        .font(.headline)
-                                        .fontWeight(.semibold)
-                                }
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 18)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .fill(Color.red.opacity(0.7))
-                                )
-                                .cornerRadius(16)
-                                .shadow(color: .red.opacity(0.2), radius: 8, x: 0, y: 4)
-                            }
-                            .buttonStyle(HomeButtonStyle())
+
                         }
                         .padding(.horizontal, 24)
                         .padding(.bottom, geometry.safeAreaInsets.bottom + 20)

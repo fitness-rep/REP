@@ -29,7 +29,7 @@ struct SchedulePreferenceView: View {
             }
             .padding(.horizontal)
             Spacer()
-            NavigationLink(destination: Text("Next Screen Placeholder"), isActive: $navigateToNext) {
+            NavigationLink(destination: WorkoutDurationView(), isActive: $navigateToNext) {
                 EmptyView()
             }
         }

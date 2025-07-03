@@ -29,7 +29,7 @@ struct ExerciseLocationView: View {
             }
             .padding(.horizontal)
             Spacer()
-            NavigationLink(destination: WorkoutFrequencyView(), isActive: $navigateToNext) {
+            NavigationLink(destination: WorkoutDurationView(), isActive: $navigateToNext) {
                 EmptyView()
             }
         }
