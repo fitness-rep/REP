@@ -13,12 +13,12 @@ struct GenderOptionCard: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .fill(Color(.systemGray6).opacity(0.12))
+                .fill(Color.clear)
                 .overlay(
                     RoundedRectangle(cornerRadius: 28, style: .continuous)
-                        .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 3)
+                        .stroke(isSelected ? Color.blue : Color.white.opacity(0.2), lineWidth: isSelected ? 3 : 1)
                 )
-                .shadow(color: isSelected ? Color.blue.opacity(0.18) : Color.black.opacity(0.08), radius: isSelected ? 12 : 6, x: 0, y: 4)
+                .shadow(color: isSelected ? Color.blue.opacity(0.3) : Color.black.opacity(0.2), radius: isSelected ? 12 : 6, x: 0, y: 4)
             
             Image(gender == .male ? "male_avatar" : "female_avatar")
                 .resizable()
