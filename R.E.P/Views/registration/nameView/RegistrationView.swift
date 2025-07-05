@@ -287,22 +287,6 @@ struct RegistrationView: View {
     }
 }
 
-// Custom TextField Style
-struct CustomTextFieldStyle: TextFieldStyle {
-    func _body(configuration: TextField<Self._Label>) -> some View {
-        configuration
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(.systemGray6))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.blue.opacity(0.3), lineWidth: 1)
-                    )
-            )
-    }
-}
-
 #Preview {
     RegistrationView()
 } 

@@ -34,10 +34,13 @@ class AuthViewModel: ObservableObject {
     }
     
     func signOut() {
-        do {
-            try authManager.signOut()
-        } catch {
-            errorMessage = error.localizedDescription
+        DispatchQueue.main.async {
+            do {
+                try self.authManager.signOut()
+            } catch {
+                self.errorMessage = error.localizedDescription
+                print("Sign out error: \(error.localizedDescription)")
+            }
         }
     }
 } 

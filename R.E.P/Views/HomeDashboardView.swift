@@ -14,50 +14,92 @@ struct HomeDashboardView: View {
         _dailyProgress = StateObject(wrappedValue: DailyProgress(userData: userData))
     }
     
+    // Calculate overall goal progress (average of calories and workout progress)
+    var overallGoalProgress: Double {
+        return (dailyProgress.caloriesProgress + dailyProgress.workoutProgress) / 2.0
+    }
+    
     var body: some View {
         TabView(selection: $selectedTab) {
             // Home Tab
             VStack(spacing: 0) {
-                // Header
-                VStack(spacing: 16) {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Welcome back!")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .foregroundColor(.primary)
+                // Header with contact card, calendar, and logout
+                HStack {
+                    // Contact Card (Top Left)
+                    Button(action: {
+                        // Contact action - could open contact info or profile
+                    }) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.black)
+                                .frame(width: 50, height: 50)
+                                .overlay(
+                                    Circle()
+                                        .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                                )
                             
-                            Text("Ready for your next workout?")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
-                        
-                        Spacer()
-                        
-                        // Date display
-                        VStack(alignment: .trailing, spacing: 2) {
-                            Text(DateFormatter.dayFormatter.string(from: Date()))
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundColor(.secondary)
-                            
-                            Text(DateFormatter.monthYearFormatter.string(from: Date()))
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
+                            Image(systemName: "person.circle.fill")
+                                .font(.system(size: 24, weight: .medium))
+                                .foregroundColor(.white)
                         }
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 10)
+                    
+                    Spacer()
+                    
+                    // Calendar Pill (Center)
+                    ProgressCalendarView()
+                    
+                    Spacer()
+                    
+                    // Logout Button (Top Right)
+                    Button(action: {
+                        // Sign out the user with error handling
+                        DispatchQueue.main.async {
+                            authViewModel.signOut()
+                        }
+                    }) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.white.opacity(0.1))
+                                .frame(width: 50, height: 50)
+                                .overlay(
+                                    Circle()
+                                        .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                                )
+                            
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                                .font(.system(size: 20, weight: .medium))
+                                .foregroundColor(.white)
+                        }
+                    }
                 }
+                .padding(.horizontal, 20)
+                .padding(.top, 10)
                 .padding(.bottom, 20)
                 
                 ScrollView {
                     VStack(spacing: 24) {
+                        
+                        // Overall Goal Progress Section
+                        VStack(spacing: 20) {
+                            // Overall Goal Progress Bar
+                            CircularProgressView(
+                                progress: overallGoalProgress,
+                                title: "Goal Progress",
+                                value: "\(Int(overallGoalProgress * 100))%",
+                                subtitle: "Complete",
+                                color: .purple,
+                                size: 160
+                            )
+                        }
+                        .padding(.horizontal, 20)
+                        
                         // Progress Overview Section
                         VStack(spacing: 20) {
                             Text("Today's Progress")
                                 .font(.headline)
                                 .fontWeight(.semibold)
+                                .foregroundColor(.white)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
                             HStack(spacing: 20) {
@@ -68,7 +110,7 @@ struct HomeDashboardView: View {
                                     value: "\(Int(dailyProgress.caloriesConsumed))",
                                     subtitle: "of \(Int(dailyProgress.caloriesTarget))",
                                     color: .blue,
-                                    size: 140
+                                    size: 120
                                 )
                                 
                                 // Workout Progress
@@ -78,26 +120,11 @@ struct HomeDashboardView: View {
                                     value: "\(Int(dailyProgress.workoutMinutesCompleted))",
                                     subtitle: "of \(Int(dailyProgress.workoutMinutesTarget)) min",
                                     color: .green,
-                                    size: 140
+                                    size: 120
                                 )
                             }
                             
-                            // Progress Details
-                            HStack(spacing: 16) {
-                                ProgressDetailCard(
-                                    title: "Calories Left",
-                                    value: "\(Int(dailyProgress.caloriesRemaining))",
-                                    icon: "flame.fill",
-                                    color: .blue
-                                )
-                                
-                                ProgressDetailCard(
-                                    title: "Workout Left",
-                                    value: "\(Int(dailyProgress.workoutMinutesRemaining)) min",
-                                    icon: "figure.strengthtraining.traditional",
-                                    color: .green
-                                )
-                            }
+
                         }
                         .padding(.horizontal, 20)
                         
@@ -106,20 +133,21 @@ struct HomeDashboardView: View {
                             Text("Quick Actions")
                                 .font(.headline)
                                 .fontWeight(.semibold)
+                                .foregroundColor(.white)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
                             HStack(spacing: 16) {
                                 QuickActionButton(
-                                    title: "Log Meal",
-                                    icon: "plus.circle.fill",
+                                    title: "View Today's Meals",
+                                    icon: "fork.knife",
                                     color: .blue
                                 ) {
                                     showingLogMeal = true
                                 }
                                 
                                 QuickActionButton(
-                                    title: "Log Workout",
-                                    icon: "dumbbell.fill",
+                                    title: "View Today's Workout",
+                                    icon: "figure.strengthtraining.traditional",
                                     color: .green
                                 ) {
                                     showingLogWorkout = true
@@ -151,6 +179,7 @@ struct HomeDashboardView: View {
                             Text("Today's Summary")
                                 .font(.headline)
                                 .fontWeight(.semibold)
+                                .foregroundColor(.white)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
                             VStack(spacing: 12) {
@@ -165,6 +194,12 @@ struct HomeDashboardView: View {
                                     progress: dailyProgress.workoutProgress,
                                     color: .green
                                 )
+                                
+                                SummaryCard(
+                                    title: "Overall Goal",
+                                    progress: overallGoalProgress,
+                                    color: .purple
+                                )
                             }
                         }
                         .padding(.horizontal, 20)
@@ -172,6 +207,7 @@ struct HomeDashboardView: View {
                     }
                 }
             }
+            .background(Color.black.ignoresSafeArea())
             .tabItem {
                 Image(systemName: "house.fill")
                 Text("Home")
@@ -183,13 +219,15 @@ struct HomeDashboardView: View {
                 Text("Workouts")
                     .font(.title)
                     .fontWeight(.bold)
+                    .foregroundColor(.white)
                 
                 Text("Your personalized workout plans will appear here")
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.white.opacity(0.7))
                     .multilineTextAlignment(.center)
                     .padding()
             }
+            .background(Color.black.ignoresSafeArea())
             .tabItem {
                 Image(systemName: "dumbbell.fill")
                 Text("Workouts")
@@ -201,13 +239,15 @@ struct HomeDashboardView: View {
                 Text("Nutrition")
                     .font(.title)
                     .fontWeight(.bold)
+                    .foregroundColor(.white)
                 
                 Text("Track your meals and nutrition here")
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.white.opacity(0.7))
                     .multilineTextAlignment(.center)
                     .padding()
             }
+            .background(Color.black.ignoresSafeArea())
             .tabItem {
                 Image(systemName: "fork.knife")
                 Text("Nutrition")
@@ -219,13 +259,15 @@ struct HomeDashboardView: View {
                 Text("Progress")
                     .font(.title)
                     .fontWeight(.bold)
+                    .foregroundColor(.white)
                 
                 Text("View your fitness progress and analytics here")
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.white.opacity(0.7))
                     .multilineTextAlignment(.center)
                     .padding()
             }
+            .background(Color.black.ignoresSafeArea())
             .tabItem {
                 Image(systemName: "chart.line.uptrend.xyaxis")
                 Text("Progress")
@@ -237,13 +279,15 @@ struct HomeDashboardView: View {
                 Text("Profile")
                     .font(.title)
                     .fontWeight(.bold)
+                    .foregroundColor(.white)
                 
                 Text("Manage your account and settings here")
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.white.opacity(0.7))
                     .multilineTextAlignment(.center)
                     .padding()
             }
+            .background(Color.black.ignoresSafeArea())
             .tabItem {
                 Image(systemName: "person.fill")
                 Text("Profile")
@@ -251,10 +295,10 @@ struct HomeDashboardView: View {
             .tag(4)
         }
         .sheet(isPresented: $showingLogMeal) {
-            LogMealView(dailyProgress: dailyProgress)
+            TodaysMealPlanView(dailyProgress: dailyProgress)
         }
         .sheet(isPresented: $showingLogWorkout) {
-            LogWorkoutView(dailyProgress: dailyProgress)
+            TodaysWorkoutPlanView(dailyProgress: dailyProgress)
         }
     }
 }
@@ -270,7 +314,7 @@ struct ProgressDetailCard: View {
         VStack(spacing: 8) {
             ZStack {
                 Circle()
-                    .fill(color.opacity(0.1))
+                    .fill(color.opacity(0.2))
                     .frame(width: 40, height: 40)
                 
                 Image(systemName: icon)
@@ -282,19 +326,19 @@ struct ProgressDetailCard: View {
                 Text(value)
                     .font(.title3)
                     .fontWeight(.bold)
-                    .foregroundColor(.primary)
+                    .foregroundColor(.white)
                 
                 Text(title)
                     .font(.caption)
                     .fontWeight(.medium)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.white.opacity(0.7))
             }
         }
         .frame(maxWidth: .infinity)
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemGray6))
+                .fill(Color.white.opacity(0.1))
         )
     }
 }
@@ -310,11 +354,11 @@ struct SummaryCard: View {
                 Text(title)
                     .font(.subheadline)
                     .fontWeight(.medium)
-                    .foregroundColor(.primary)
+                    .foregroundColor(.white)
                 
                 Text("\(Int(progress * 100))% Complete")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.white.opacity(0.7))
             }
             
             Spacer()
@@ -334,7 +378,7 @@ struct SummaryCard: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemGray6))
+                .fill(Color.white.opacity(0.1))
         )
     }
 }
@@ -350,7 +394,7 @@ struct QuickActionButton: View {
             VStack(spacing: 8) {
                 ZStack {
                     Circle()
-                        .fill(color.opacity(0.1))
+                        .fill(color.opacity(0.2))
                         .frame(width: 50, height: 50)
                     
                     Image(systemName: icon)
@@ -361,14 +405,14 @@ struct QuickActionButton: View {
                 Text(title)
                     .font(.caption)
                     .fontWeight(.medium)
-                    .foregroundColor(.primary)
+                    .foregroundColor(.white)
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
             .padding()
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(.systemGray6))
+                    .fill(Color.white.opacity(0.1))
             )
         }
         .buttonStyle(PlainButtonStyle())

@@ -46,6 +46,18 @@ struct REPApp: App {
             print("Firebase configuration failed: \(error)")
             // Continue without Firebase for now
         }
+        // Set global tab bar appearance for black theme
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.configureWithOpaqueBackground()
+        tabBarAppearance.backgroundColor = UIColor.black
+        tabBarAppearance.stackedLayoutAppearance.selected.iconColor = .white
+        tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.white]
+        tabBarAppearance.stackedLayoutAppearance.normal.iconColor = .lightGray
+        tabBarAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.lightGray]
+        UITabBar.appearance().standardAppearance = tabBarAppearance
+        if #available(iOS 15.0, *) {
+            UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+        }
     }
     
     var body: some Scene {
