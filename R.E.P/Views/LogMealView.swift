@@ -1,0 +1,194 @@
+//
+//  LogMealView.swift
+//  R.E.P
+//
+//  Created by KISHORE BANDARU on 7/4/25.
+//
+
+import SwiftUI
+
+struct LogMealView: View {
+    @Environment(\.dismiss) private var dismiss
+    @ObservedObject var dailyProgress: DailyProgress
+    @State private var mealName = ""
+    @State private var calories = ""
+    @State private var selectedMealType = MealType.breakfast
+    
+    enum MealType: String, CaseIterable {
+        case breakfast = "Breakfast"
+        case lunch = "Lunch"
+        case dinner = "Dinner"
+        case snack = "Snack"
+    }
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 24) {
+                // Header
+                VStack(spacing: 8) {
+                    Text("Log Your Meal")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    
+                    Text("Track your nutrition to stay on target")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.top)
+                
+                // Meal Type Selection
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Meal Type")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                    
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 12) {
+                        ForEach(MealType.allCases, id: \.self) { mealType in
+                            MealTypeButton(
+                                title: mealType.rawValue,
+                                isSelected: selectedMealType == mealType
+                            ) {
+                                selectedMealType = mealType
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal)
+                
+                // Meal Details
+                VStack(spacing: 20) {
+                    // Meal Name
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Meal Name")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                        
+                        TextField("e.g., Grilled Chicken Salad", text: $mealName)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                    }
+                    
+                    // Calories
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Calories")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                        
+                        TextField("Enter calories", text: $calories)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .keyboardType(.numberPad)
+                    }
+                }
+                .padding(.horizontal)
+                
+                Spacer()
+                
+                // Current Progress Preview
+                VStack(spacing: 16) {
+                    Text("Today's Progress")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                    
+                    HStack(spacing: 20) {
+                        VStack(spacing: 4) {
+                            Text("\(Int(dailyProgress.caloriesConsumed))")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(.blue)
+                            
+                            Text("Consumed")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        VStack(spacing: 4) {
+                            Text("\(Int(dailyProgress.caloriesTarget))")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(.primary)
+                            
+                            Text("Target")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        VStack(spacing: 4) {
+                            Text("\(Int(dailyProgress.caloriesRemaining))")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(.green)
+                            
+                            Text("Remaining")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color(.systemGray6))
+                )
+                .padding(.horizontal)
+                
+                // Action Buttons
+                VStack(spacing: 12) {
+                    Button(action: logMeal) {
+                        Text("Log Meal")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.blue)
+                            )
+                    }
+                    .disabled(mealName.isEmpty || calories.isEmpty)
+                    
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                }
+                .padding(.horizontal)
+                .padding(.bottom)
+            }
+            .navigationBarHidden(true)
+        }
+    }
+    
+    private func logMeal() {
+        guard let caloriesValue = Double(calories), caloriesValue > 0 else { return }
+        
+        dailyProgress.logCalories(caloriesValue)
+        dismiss()
+    }
+}
+
+struct MealTypeButton: View {
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .foregroundColor(isSelected ? .white : .primary)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(isSelected ? Color.blue : Color(.systemGray5))
+                )
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+#Preview {
+    LogMealView(dailyProgress: DailyProgress(userData: RegistrationData()))
+} 
