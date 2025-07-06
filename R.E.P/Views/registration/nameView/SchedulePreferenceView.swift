@@ -1,138 +1,189 @@
 import SwiftUI
 
 struct SchedulePreferenceView: View {
-    @State private var selectedPreference: SchedulePreference? = nil
+    enum ScheduleTab { case smart, fixed }
+    @Environment(\.presentationMode) var presentationMode
+    @Namespace private var tabNamespace
+    @State private var selectedTab: ScheduleTab = .smart
+    @State private var selectedSmart: Int? = nil
+    @State private var selectedDays: Set<String> = []
     @State private var navigateToNext = false
+    @EnvironmentObject var registrationUser: RegistrationUser
     
-    let options: [SchedulePreference] = SchedulePreference.allCases
+    let smartOptions = [
+        "1 workout/week",
+        "2 workouts/week",
+        "3 workouts/week",
+        "4 workouts/week",
+        "5 workouts/week",
+        "6 workouts/week",
+        "Every Day"
+    ]
+    let weekDays = [
+        "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+    ]
+    
+    var canContinue: Bool {
+        switch selectedTab {
+        case .smart: return selectedSmart != nil
+        case .fixed: return !selectedDays.isEmpty
+        }
+    }
+    
+    // Segmented control as a computed property
+    private var segmentedControl: some View {
+        HStack(spacing: 0) {
+            ForEach([ScheduleTab.smart, ScheduleTab.fixed], id: \.self) { tab in
+                Button(action: {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                        selectedTab = tab
+                    }
+                }) {
+                    HStack(spacing: 4) {
+                        Text(tab == .smart ? "SMART SCHEDULE ✨" : "FIXED SCHEDULE")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(selectedTab == tab ? .black : .primary)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(
+                        ZStack {
+                            if selectedTab == tab {
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .fill(Color.white)
+                                    .shadow(color: Color.black.opacity(0.07), radius: 4, x: 0, y: 2)
+                                    .matchedGeometryEffect(id: "tab", in: tabNamespace)
+                            }
+                        }
+                    )
+                }
+            }
+        }
+        .background(Color(.systemGray5))
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .padding(.horizontal, 24)
+        .padding(.bottom, 16)
+    }
+    
+    // Smart options as a computed property
+    private var smartOptionsList: some View {
+        ForEach(smartOptions.indices, id: \.self) { idx in
+            let option = smartOptions[idx]
+            Button(action: {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                    selectedSmart = idx
+                }
+            }) {
+                HStack {
+                    Text(option)
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(selectedSmart == idx ? .white : .primary)
+                    Spacer()
+                }
+                .padding(.vertical, 18)
+                .padding(.horizontal, 18)
+                .background(
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill(selectedSmart == idx
+                            ? AnyShapeStyle(LinearGradient(gradient: Gradient(colors: [Color.purple, Color.blue]), startPoint: .leading, endPoint: .trailing))
+                            : AnyShapeStyle(Color(.systemGray6))
+                        )
+                )
+            }
+            .buttonStyle(PlainButtonStyle())
+        }
+    }
+    
+    // Fixed options as a computed property
+    private var fixedOptionsList: some View {
+        ForEach(weekDays, id: \.self) { day in
+            Button(action: {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                    if selectedDays.contains(day) {
+                        selectedDays.remove(day)
+                    } else {
+                        selectedDays.insert(day)
+                    }
+                }
+            }) {
+                HStack {
+                    Text(day)
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(selectedDays.contains(day) ? .white : .primary)
+                    Spacer()
+                }
+                .padding(.vertical, 18)
+                .padding(.horizontal, 18)
+                .background(
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill(selectedDays.contains(day)
+                            ? AnyShapeStyle(LinearGradient(gradient: Gradient(colors: [Color.purple, Color.blue]), startPoint: .leading, endPoint: .trailing))
+                            : AnyShapeStyle(Color(.systemGray6))
+                        )
+                )
+            }
+            .buttonStyle(PlainButtonStyle())
+        }
+    }
     
     var body: some View {
         VStack(spacing: 0) {
-            Text("Choose the way you want to schedule your workout?")
-                .font(.largeTitle)
+            // Title
+            Text("to workout?")
+                .font(.title2)
                 .bold()
                 .multilineTextAlignment(.center)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, 40)
-            Spacer()
-            VStack(spacing: 24) {
-                ForEach(options, id: \ .self) { option in
-                    SchedulePreferenceCard(
-                        preference: option,
-                        isSelected: selectedPreference == option
-                    ) {
-                        selectedPreference = option
-                        navigateToNext = true
-                    }
+                .padding(.top, 20)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 8)
+            // Segmented control
+            segmentedControl
+            // Description
+            Text(selectedTab == .smart ?
+                 "I'll dynamically adapt your schedule according to your activity and preferences."
+                 : "You can pick the specific weekdays you want to work out and maintain a set schedule.")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+                .padding(.bottom, 16)
+            // Options
+            VStack(spacing: 14) {
+                if selectedTab == .smart {
+                    smartOptionsList
+                } else {
+                    fixedOptionsList
                 }
             }
-            .padding(.horizontal)
+            .padding(.horizontal, 24)
+            .padding(.bottom, 16)
             Spacer()
-            NavigationLink(destination: WorkoutDurationView(), isActive: $navigateToNext) {
+            Spacer()
+            
+            // Continue button
+            Button(action: {
+                navigateToNext = true
+            }) {
+                Text("Continue")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(
+                        LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]), startPoint: .leading, endPoint: .trailing)
+                    )
+                    .cornerRadius(16)
+                    .shadow(color: .purple.opacity(0.3), radius: 8, x: 0, y: 4)
+                    .opacity(canContinue ? 1.0 : 0.5)
+            }
+            .disabled(!canContinue)
+            .padding(.horizontal, 32)
+            .padding(.bottom, 32)
+            NavigationLink(destination: WorkoutDurationView().environmentObject(registrationUser), isActive: $navigateToNext) {
                 EmptyView()
             }
         }
+        .background(Color(.systemBackground))
+        .ignoresSafeArea(edges: .bottom)
     }
 }
-
-enum SchedulePreference: String, CaseIterable, Hashable {
-    case calendar = "Calendar driven"
-    case flexible = "No calendar"
-    case hybrid = "Hybrid"
-    
-    var subtitle: String {
-        switch self {
-        case .calendar:
-            return "Stay committed and focused with a structured workout calendar"
-        case .flexible:
-            return "Train according to your own schedule"
-        case .hybrid:
-            return "Mix of calendar and flexible scheduling"
-        }
-    }
-    
-    var icon: String {
-        switch self {
-        case .calendar: return "calendar"
-        case .flexible: return "clock.arrow.circlepath"
-        case .hybrid: return "rectangle.3.group.bubble.left"
-        }
-    }
-    
-    var color: Color {
-        switch self {
-        case .calendar: return .blue
-        case .flexible: return .orange
-        case .hybrid: return .purple
-        }
-    }
-}
-
-struct SchedulePreferenceCard: View {
-    let preference: SchedulePreference
-    let isSelected: Bool
-    let action: () -> Void
-    @State private var isPressed = false
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 18) {
-                ZStack {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                gradient: Gradient(colors: [preference.color.opacity(0.7), preference.color.opacity(0.4)]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 54, height: 54)
-                        .shadow(color: preference.color.opacity(0.18), radius: 6, x: 0, y: 2)
-                    Image(systemName: preference.icon)
-                        .font(.system(size: 26, weight: .bold))
-                        .foregroundColor(.white)
-                        .scaleEffect(isPressed ? 0.92 : 1.0)
-                        .animation(.spring(response: 0.3, dampingFraction: 0.5), value: isPressed)
-                }
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(preference.rawValue)
-                        .font(.headline)
-                        .fontWeight(.bold)
-                        .foregroundColor(isSelected ? .white : .primary)
-                    Text(preference.subtitle)
-                        .font(.subheadline)
-                        .foregroundColor(isSelected ? .white.opacity(0.8) : .secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .multilineTextAlignment(.leading)
-                }
-                Spacer()
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(preference.color)
-                        .font(.title2)
-                        .transition(.scale)
-                }
-            }
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 18)
-                    .fill(isSelected ? AnyShapeStyle(LinearGradient(gradient: Gradient(colors: [preference.color, .purple]), startPoint: .leading, endPoint: .trailing)) : AnyShapeStyle(Color(.systemGray6)))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 18)
-                    .stroke(isSelected ? AnyShapeStyle(preference.color) : AnyShapeStyle(Color.clear), lineWidth: 2)
-            )
-            .shadow(color: isSelected ? preference.color.opacity(0.15) : .clear, radius: 8, x: 0, y: 4)
-        }
-        .buttonStyle(PlainButtonStyle())
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in isPressed = true }
-                .onEnded { _ in isPressed = false }
-        )
-    }
-}
-
-//#Preview {
-//    SchedulePreferenceView()
-//} 

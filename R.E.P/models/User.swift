@@ -26,7 +26,7 @@ class RegistrationUser: ObservableObject {
     @Published var gymChallenge: String = ""
     @Published var strengthRoutine: String = ""
     @Published var exerciseLocation: String = ""
-    @Published var workoutDuration: String = ""
+    @Published var workoutDuration: Double = 0.0
     @Published var foodPreference: String = ""
     @Published var isTakingMedications: Bool = false
     @Published var medications: String = ""
@@ -139,7 +139,7 @@ struct User: Codable, Identifiable {
     let gymChallenge: String
     let strengthRoutine: String
     let exerciseLocation: String
-    let workoutDuration: String
+    let workoutDuration: Double
     let foodPreference: String
     let isTakingMedications: Bool
     let medications: String
@@ -195,7 +195,7 @@ struct User: Codable, Identifiable {
               let gymChallenge = data["gymChallenge"] as? String,
               let strengthRoutine = data["strengthRoutine"] as? String,
               let exerciseLocation = data["exerciseLocation"] as? String,
-              let workoutDuration = data["workoutDuration"] as? String,
+              let workoutDuration = data["workoutDuration"] as? Double,
               let foodPreference = data["foodPreference"] as? String,
               let isTakingMedications = data["isTakingMedications"] as? Bool,
               let medications = data["medications"] as? String,

@@ -228,7 +228,7 @@ struct AgeSelectionView: View {
                 .padding(.horizontal, 32)
                 .padding(.bottom, 32)
                 
-            NavigationLink(destination: FoodPreferenceView().environmentObject(registrationUser), isActive: $navigateToNext) {
+            NavigationLink(destination: TargetWeightView().environmentObject(registrationUser), isActive: $navigateToNext) {
                     EmptyView()
                 }
             }
