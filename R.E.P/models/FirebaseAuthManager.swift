@@ -109,6 +109,9 @@ class FirebaseAuthManager: ObservableObject {
         errorMessage = nil
         
         do {
+            // Print final registration user state
+            registrationUser.printProperties(context: "FirebaseAuthManager - Final Registration State")
+            
             // Create Firebase Auth user
             let result = try await auth.createUser(withEmail: email, password: password)
             

@@ -4,6 +4,8 @@ struct StrengthRoutineView: View {
     @State private var selectedRoutines: Set<StrengthRoutine> = []
     @State private var navigateToNext = false
     
+    @EnvironmentObject var registrationUser: RegistrationUser
+    
     let options: [StrengthRoutine] = StrengthRoutine.allCases
     
     var body: some View {
@@ -30,7 +32,11 @@ struct StrengthRoutineView: View {
             }
             .padding(.horizontal)
             Spacer()
-            Button(action: { navigateToNext = true }) {
+            Button(action: {
+                navigateToNext = true
+                registrationUser.strengthRoutine = selectedRoutines.first?.rawValue ?? ""
+                registrationUser.printProperties(context: "Strength Routine View - Exercise Location")
+            }) {
                 Text("Continue")
                     .font(.headline)
                     .foregroundColor(.white)
@@ -46,7 +52,7 @@ struct StrengthRoutineView: View {
             .disabled(selectedRoutines.isEmpty)
             .padding(.horizontal, 24)
             .padding(.bottom, 32)
-            NavigationLink(destination: ExerciseLocationView(), isActive: $navigateToNext) {
+            NavigationLink(destination: ExerciseLocationView().environmentObject(registrationUser), isActive: $navigateToNext) {
                 EmptyView()
             }
         }

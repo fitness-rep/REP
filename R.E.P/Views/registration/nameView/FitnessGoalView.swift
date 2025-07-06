@@ -25,13 +25,14 @@ struct FitnessGoalView: View {
                     ) {
                         selectedGoal = goal
                         registrationUser.fitnessGoal = goal.displayName
+                        registrationUser.printProperties(context: "FitnessGoalView - Goal Selected")
                         navigateToNext = true
                     }
                 }
             }
             .padding(.horizontal)
             Spacer()
-            NavigationLink(destination: StrengthExperienceView(), isActive: $navigateToNext) {
+            NavigationLink(destination: StrengthExperienceView().environmentObject(registrationUser), isActive: $navigateToNext) {
                 EmptyView()
             }
         }

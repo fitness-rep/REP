@@ -241,7 +241,7 @@ struct RegistrationView: View {
                 .padding(.horizontal, 32)
                 .padding(.bottom, 32)
                 
-                NavigationLink(destination: GenderSelectionView().environmentObject(registrationUser), isActive: $navigateToNext) {
+                NavigationLink(destination: HomeDashboardView(), isActive: $navigateToNext) {
                     EmptyView()
                 }
             }
@@ -274,9 +274,23 @@ struct RegistrationView: View {
     private func continueToNextStep() {
         // Update registration user with email
         registrationUser.email = email
+        registrationUser.printProperties(context: "RegistrationView - Email/Password Entered")
         
-        // Navigate to the next step in registration flow
-        navigateToNext = true
+        // Create user account
+        Task {
+            do {
+                try await authViewModel.signUp(email: email, password: password, registrationUser: registrationUser)
+                await MainActor.run {
+                    // Navigate to HomeDashboardView after successful registration
+                    navigateToNext = true
+                }
+            } catch {
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
+                    showError = true
+                }
+            }
+        }
     }
 }
 

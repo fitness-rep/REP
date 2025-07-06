@@ -13,6 +13,8 @@ struct WorkoutDurationView: View {
     @State private var showEndTimePicker = false
     @State private var navigateToNext = false
     
+    @EnvironmentObject var registrationUser: RegistrationUser
+    
     let minValue: Double = 30
     let maxValue: Double = 120
     let step: Double = 5
@@ -283,7 +285,7 @@ struct WorkoutDurationView: View {
                 .padding(.horizontal, 32)
                 .padding(.bottom, 32)
                 
-                NavigationLink(destination: AgeSelectionView(), isActive: $navigateToNext) {
+                NavigationLink(destination: AgeSelectionView().environmentObject(registrationUser), isActive: $navigateToNext) {
                     EmptyView()
                 }
             }

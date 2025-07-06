@@ -3,6 +3,7 @@ import SwiftUI
 struct StrengthExperienceView: View {
     @State private var selectedExperience: StrengthExperience? = nil
     @State private var navigateToNext = false
+    @EnvironmentObject var registrationUser: RegistrationUser
     
     let options: [StrengthExperience] = StrengthExperience.allCases
     
@@ -21,6 +22,8 @@ struct StrengthExperienceView: View {
                         isSelected: selectedExperience == option
                     ) {
                         selectedExperience = option
+                        registrationUser.strengthExperience = option.rawValue
+                        registrationUser.printProperties(context: "StrengthExperienceView - Experience Selected")
                         navigateToNext = true // You can update this to navigate to the next screen
                     }
                 }
@@ -28,7 +31,7 @@ struct StrengthExperienceView: View {
             .padding(.horizontal)
             Spacer()
             // NavigationLink to next screen (placeholder for now)
-            NavigationLink(destination: ExperienceLevelView(), isActive: $navigateToNext) {
+            NavigationLink(destination: ExperienceLevelView().environmentObject(registrationUser), isActive: $navigateToNext) {
                 EmptyView()
             }
         }

@@ -37,6 +37,7 @@ struct GenderSelectionView: View {
                                     withAnimation(.spring()) {
                                         selectedGender = gender == "male" ? .male : .female
                                         registrationUser.gender = gender
+                                        registrationUser.printProperties(context: "GenderSelectionView - Gender Selected")
                                         navigateToNameView = true
                                     }
                                 } label: {

@@ -3,7 +3,7 @@ import SwiftUI
 struct ExerciseLocationView: View {
     @State private var selectedLocation: ExerciseLocation? = nil
     @State private var navigateToNext = false
-    
+    @EnvironmentObject var registrationUser: RegistrationUser
     let options: [ExerciseLocation] = ExerciseLocation.allCases
     
     var body: some View {
@@ -23,13 +23,15 @@ struct ExerciseLocationView: View {
                         isSelected: selectedLocation == option
                     ) {
                         selectedLocation = option
+                        registrationUser.exerciseLocation = option.rawValue
+                        registrationUser.printProperties(context: "Exercise Location View - Workout Duration")
                         navigateToNext = true
                     }
                 }
             }
             .padding(.horizontal)
             Spacer()
-            NavigationLink(destination: WorkoutDurationView(), isActive: $navigateToNext) {
+            NavigationLink(destination: WorkoutDurationView().environmentObject(registrationUser), isActive: $navigateToNext) {
                 EmptyView()
             }
         }

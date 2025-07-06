@@ -62,7 +62,10 @@ struct NameView: View {
                     .padding(.bottom, 40)
                     Spacer()
                     // Next Button
-                    Button(action: { navigateToPrivacy = true }) {
+                    Button(action: { 
+                        registrationUser.printProperties(context: "NameView - Next Button")
+                        navigateToPrivacy = true 
+                    }) {
                         Text("Next")
                             .font(.system(size: 20, weight: .bold))
                             .foregroundColor(.white)

@@ -4,6 +4,8 @@ struct ExperienceLevelView: View {
     @State private var selectedLevel: ExperienceLevel? = nil
     @State private var navigateToNext = false
     
+    @EnvironmentObject var registrationUser: RegistrationUser
+    
     let options: [ExperienceLevel] = ExperienceLevel.allCases
     
     var body: some View {
@@ -21,6 +23,8 @@ struct ExperienceLevelView: View {
                         isSelected: selectedLevel == option
                     ) {
                         selectedLevel = option
+                        registrationUser.experienceLevel = option.rawValue
+                        registrationUser.printProperties(context: "Experience Level View - Gym ChallengeView Selected")
                         navigateToNext = true // You can update this to navigate to the next screen
                     }
                 }
@@ -28,7 +32,7 @@ struct ExperienceLevelView: View {
             .padding(.horizontal)
             Spacer()
             // NavigationLink to next screen (placeholder for now)
-            NavigationLink(destination: GymChallengeView(), isActive: $navigateToNext) {
+            NavigationLink(destination: GymChallengeView().environmentObject(registrationUser), isActive: $navigateToNext) {
                 EmptyView()
             }
         }

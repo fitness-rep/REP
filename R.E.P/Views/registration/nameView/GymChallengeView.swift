@@ -3,7 +3,7 @@ import SwiftUI
 struct GymChallengeView: View {
     @State private var selectedChallenges: Set<GymChallenge> = []
     @State private var navigateToNext = false
-    
+    @EnvironmentObject var registrationUser: RegistrationUser
     let options: [GymChallenge] = GymChallenge.allCases
     
     var body: some View {
@@ -32,7 +32,14 @@ struct GymChallengeView: View {
             }
             .padding(.horizontal)
             Spacer()
-            Button(action: { navigateToNext = true }) {
+            Button(action: {
+                navigateToNext = true
+                registrationUser.gymChallenge = selectedChallenges.first?.rawValue ?? ""
+                registrationUser.printProperties(context: "Gym Challenge View - Strength Routine")
+
+                
+                
+            }) {
                 Text("Continue")
                     .font(.headline)
                     .foregroundColor(.white)
@@ -48,7 +55,7 @@ struct GymChallengeView: View {
             .disabled(selectedChallenges.isEmpty)
             .padding(.horizontal, 24)
             .padding(.bottom, 32)
-            NavigationLink(destination: StrengthRoutineView(), isActive: $navigateToNext) {
+            NavigationLink(destination: StrengthRoutineView().environmentObject(registrationUser), isActive: $navigateToNext) {
                 EmptyView()
             }
         }

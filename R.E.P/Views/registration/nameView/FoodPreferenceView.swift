@@ -4,6 +4,7 @@ struct FoodPreferenceView: View {
     @State private var selectedPreference: FoodPreference? = nil
     @State private var navigateToNext = false
     
+    @EnvironmentObject var registrationUser: RegistrationUser
     let options: [FoodPreference] = FoodPreference.allCases
     
     var body: some View {
@@ -35,13 +36,15 @@ struct FoodPreferenceView: View {
                         ) {
                             selectedPreference = option
                             navigateToNext = true
+                            registrationUser.foodPreference = option.rawValue
+                            registrationUser.printProperties(context: "FoodPreferenceView -> HealthInfoView")
                         }
                     }
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 32)
                 
-                NavigationLink(destination: HealthInfoView(), isActive: $navigateToNext) {
+                NavigationLink(destination: HealthInfoView().environmentObject(registrationUser), isActive: $navigateToNext) {
                     EmptyView()
                 }
             }

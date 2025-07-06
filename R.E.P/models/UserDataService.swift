@@ -82,7 +82,7 @@ class UserDataService: ObservableObject {
     
     // MARK: - User Data Management
     
-    func updateUserProfile(name: String? = nil, age: Int? = nil, height: Double? = nil, weight: Double? = nil, fitnessGoal: String? = nil) async throws {
+    func updateUserProfile(name: String? = nil, age: Double? = nil, height: Double? = nil, weight: Double? = nil, fitnessGoal: String? = nil) async throws {
         guard let currentUser = currentUser else { return }
         
         var updatedUser = currentUser
@@ -97,9 +97,21 @@ class UserDataService: ObservableObject {
                 height: currentUser.height,
                 weight: currentUser.weight,
                 fitnessGoal: currentUser.fitnessGoal,
+                strengthExperience: currentUser.strengthExperience,
+                experienceLevel: currentUser.experienceLevel,
+                gymChallenge: currentUser.gymChallenge,
+                strengthRoutine: currentUser.strengthRoutine,
+                exerciseLocation: currentUser.exerciseLocation,
+                workoutDuration: currentUser.workoutDuration,
+                foodPreference: currentUser.foodPreference,
+                isTakingMedications: currentUser.isTakingMedications,
+                medications: currentUser.medications,
+                hasInjuries: currentUser.hasInjuries,
+                injuries: currentUser.injuries,
                 registrationDate: currentUser.registrationDate,
                 currentRoutineId: currentUser.currentRoutineId,
-                goals: currentUser.goals
+                goals: currentUser.goals,
+                schemaVersion: currentUser.schemaVersion
             )
         }
         
@@ -113,9 +125,21 @@ class UserDataService: ObservableObject {
                 height: currentUser.height,
                 weight: currentUser.weight,
                 fitnessGoal: currentUser.fitnessGoal,
+                strengthExperience: currentUser.strengthExperience,
+                experienceLevel: currentUser.experienceLevel,
+                gymChallenge: currentUser.gymChallenge,
+                strengthRoutine: currentUser.strengthRoutine,
+                exerciseLocation: currentUser.exerciseLocation,
+                workoutDuration: currentUser.workoutDuration,
+                foodPreference: currentUser.foodPreference,
+                isTakingMedications: currentUser.isTakingMedications,
+                medications: currentUser.medications,
+                hasInjuries: currentUser.hasInjuries,
+                injuries: currentUser.injuries,
                 registrationDate: currentUser.registrationDate,
                 currentRoutineId: currentUser.currentRoutineId,
-                goals: currentUser.goals
+                goals: currentUser.goals,
+                schemaVersion: currentUser.schemaVersion
             )
         }
         
@@ -129,9 +153,21 @@ class UserDataService: ObservableObject {
                 height: height,
                 weight: currentUser.weight,
                 fitnessGoal: currentUser.fitnessGoal,
+                strengthExperience: currentUser.strengthExperience,
+                experienceLevel: currentUser.experienceLevel,
+                gymChallenge: currentUser.gymChallenge,
+                strengthRoutine: currentUser.strengthRoutine,
+                exerciseLocation: currentUser.exerciseLocation,
+                workoutDuration: currentUser.workoutDuration,
+                foodPreference: currentUser.foodPreference,
+                isTakingMedications: currentUser.isTakingMedications,
+                medications: currentUser.medications,
+                hasInjuries: currentUser.hasInjuries,
+                injuries: currentUser.injuries,
                 registrationDate: currentUser.registrationDate,
                 currentRoutineId: currentUser.currentRoutineId,
-                goals: currentUser.goals
+                goals: currentUser.goals,
+                schemaVersion: currentUser.schemaVersion
             )
         }
         
@@ -145,9 +181,21 @@ class UserDataService: ObservableObject {
                 height: updatedUser.height,
                 weight: weight,
                 fitnessGoal: currentUser.fitnessGoal,
+                strengthExperience: currentUser.strengthExperience,
+                experienceLevel: currentUser.experienceLevel,
+                gymChallenge: currentUser.gymChallenge,
+                strengthRoutine: currentUser.strengthRoutine,
+                exerciseLocation: currentUser.exerciseLocation,
+                workoutDuration: currentUser.workoutDuration,
+                foodPreference: currentUser.foodPreference,
+                isTakingMedications: currentUser.isTakingMedications,
+                medications: currentUser.medications,
+                hasInjuries: currentUser.hasInjuries,
+                injuries: currentUser.injuries,
                 registrationDate: currentUser.registrationDate,
                 currentRoutineId: currentUser.currentRoutineId,
-                goals: currentUser.goals
+                goals: currentUser.goals,
+                schemaVersion: currentUser.schemaVersion
             )
         }
         
@@ -161,9 +209,21 @@ class UserDataService: ObservableObject {
                 height: updatedUser.height,
                 weight: updatedUser.weight,
                 fitnessGoal: fitnessGoal,
+                strengthExperience: currentUser.strengthExperience,
+                experienceLevel: currentUser.experienceLevel,
+                gymChallenge: currentUser.gymChallenge,
+                strengthRoutine: currentUser.strengthRoutine,
+                exerciseLocation: currentUser.exerciseLocation,
+                workoutDuration: currentUser.workoutDuration,
+                foodPreference: currentUser.foodPreference,
+                isTakingMedications: currentUser.isTakingMedications,
+                medications: currentUser.medications,
+                hasInjuries: currentUser.hasInjuries,
+                injuries: currentUser.injuries,
                 registrationDate: currentUser.registrationDate,
                 currentRoutineId: currentUser.currentRoutineId,
-                goals: currentUser.goals
+                goals: currentUser.goals,
+                schemaVersion: currentUser.schemaVersion
             )
         }
         
@@ -186,9 +246,21 @@ class UserDataService: ObservableObject {
             height: currentUser.height,
             weight: currentUser.weight,
             fitnessGoal: currentUser.fitnessGoal,
+            strengthExperience: currentUser.strengthExperience,
+            experienceLevel: currentUser.experienceLevel,
+            gymChallenge: currentUser.gymChallenge,
+            strengthRoutine: currentUser.strengthRoutine,
+            exerciseLocation: currentUser.exerciseLocation,
+            workoutDuration: currentUser.workoutDuration,
+            foodPreference: currentUser.foodPreference,
+            isTakingMedications: currentUser.isTakingMedications,
+            medications: currentUser.medications,
+            hasInjuries: currentUser.hasInjuries,
+            injuries: currentUser.injuries,
             registrationDate: currentUser.registrationDate,
             currentRoutineId: routineId,
-            goals: currentUser.goals
+            goals: currentUser.goals,
+            schemaVersion: currentUser.schemaVersion
         )
         
         self.currentUser = updatedUser
@@ -209,9 +281,21 @@ class UserDataService: ObservableObject {
             height: currentUser.height,
             weight: currentUser.weight,
             fitnessGoal: currentUser.fitnessGoal,
+            strengthExperience: currentUser.strengthExperience,
+            experienceLevel: currentUser.experienceLevel,
+            gymChallenge: currentUser.gymChallenge,
+            strengthRoutine: currentUser.strengthRoutine,
+            exerciseLocation: currentUser.exerciseLocation,
+            workoutDuration: currentUser.workoutDuration,
+            foodPreference: currentUser.foodPreference,
+            isTakingMedications: currentUser.isTakingMedications,
+            medications: currentUser.medications,
+            hasInjuries: currentUser.hasInjuries,
+            injuries: currentUser.injuries,
             registrationDate: currentUser.registrationDate,
             currentRoutineId: currentUser.currentRoutineId,
-            goals: goals
+            goals: goals,
+            schemaVersion: currentUser.schemaVersion
         )
         
         self.currentUser = updatedUser

@@ -51,7 +51,10 @@ struct PrivacyFirstView: View {
                     .padding(.bottom, 40)
                     Spacer()
                     // Floating Continue Button
-                    Button(action: { navigateToFitnessGoal = true }) {
+                    Button(action: { 
+                        registrationUser.printProperties(context: "PrivacyFirstView - Continue Button")
+                        navigateToFitnessGoal = true 
+                    }) {
                         Text("Continue")
                             .font(.system(size: 20, weight: .bold))
                             .foregroundColor(.white)

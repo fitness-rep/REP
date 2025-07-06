@@ -17,10 +17,21 @@ class RegistrationUser: ObservableObject {
     @Published var name: String = ""
     @Published var email: String = ""
     @Published var gender: String = "male"
-    @Published var age: Int = 0
+    @Published var age: Double = 0.0
     @Published var height: Double = 0.0
     @Published var weight: Double = 0.0
     @Published var fitnessGoal: String = ""
+    @Published var strengthExperience: String = ""
+    @Published var experienceLevel: String = ""
+    @Published var gymChallenge: String = ""
+    @Published var strengthRoutine: String = ""
+    @Published var exerciseLocation: String = ""
+    @Published var workoutDuration: String = ""
+    @Published var foodPreference: String = ""
+    @Published var isTakingMedications: Bool = false
+    @Published var medications: String = ""
+    @Published var hasInjuries: Bool = false
+    @Published var injuries: String = ""
     
     init() {}
     
@@ -35,6 +46,17 @@ class RegistrationUser: ObservableObject {
             height: height,
             weight: weight,
             fitnessGoal: fitnessGoal,
+            strengthExperience: strengthExperience,
+            experienceLevel: experienceLevel,
+            gymChallenge: gymChallenge,
+            strengthRoutine: strengthRoutine,
+            exerciseLocation: exerciseLocation,
+            workoutDuration: workoutDuration,
+            foodPreference: foodPreference,
+            isTakingMedications: isTakingMedications,
+            medications: medications,
+            hasInjuries: hasInjuries,
+            injuries: injuries,
             registrationDate: Date(),
             currentRoutineId: nil,
             goals: []
@@ -76,6 +98,30 @@ class RegistrationUser: ObservableObject {
         
         return errors
     }
+    
+    // Print all properties for debugging
+    func printProperties(context: String = "") {
+        print("=== RegistrationUser Properties \(context) ===")
+        print("name: '\(name)'")
+        print("email: '\(email)'")
+        print("gender: '\(gender)'")
+        print("age: \(age)")
+        print("height: \(height)")
+        print("weight: \(weight)")
+        print("fitnessGoal: '\(fitnessGoal)'")
+        print("strengthExperience: '\(strengthExperience)'")
+        print("experienceLevel: '\(experienceLevel)'")
+        print("gymChallenge: '\(gymChallenge)'")
+        print("strengthRoutine: '\(strengthRoutine)'")
+        print("exerciseLocation: '\(exerciseLocation)'")
+        print("workoutDuration: '\(workoutDuration)'")
+        print("foodPreference: '\(foodPreference)'")
+        print("isTakingMedications: \(isTakingMedications)")
+        print("medications: '\(medications)'")
+        print("hasInjuries: \(hasInjuries)")
+        print("injuries: '\(injuries)'")
+        print("==========================================")
+    }
 }
 
 struct User: Codable, Identifiable {
@@ -84,10 +130,21 @@ struct User: Codable, Identifiable {
     let name: String
     let email: String
     let gender: String
-    let age: Int
+    let age: Double
     let height: Double
     let weight: Double
     let fitnessGoal: String
+    let strengthExperience: String
+    let experienceLevel: String
+    let gymChallenge: String
+    let strengthRoutine: String
+    let exerciseLocation: String
+    let workoutDuration: String
+    let foodPreference: String
+    let isTakingMedications: Bool
+    let medications: String
+    let hasInjuries: Bool
+    let injuries: String
     let registrationDate: Date
     var currentRoutineId: String?
     var goals: [Goal]
@@ -106,6 +163,17 @@ struct User: Codable, Identifiable {
             "height": height,
             "weight": weight,
             "fitnessGoal": fitnessGoal,
+            "strengthExperience": strengthExperience,
+            "experienceLevel": experienceLevel,
+            "gymChallenge": gymChallenge,
+            "strengthRoutine": strengthRoutine,
+            "exerciseLocation": exerciseLocation,
+            "workoutDuration": workoutDuration,
+            "foodPreference": foodPreference,
+            "isTakingMedications": isTakingMedications,
+            "medications": medications,
+            "hasInjuries": hasInjuries,
+            "injuries": injuries,
             "registrationDate": registrationDate,
             "currentRoutineId": currentRoutineId as Any,
             "goals": goals.map { $0.toDictionary() },
@@ -118,10 +186,21 @@ struct User: Codable, Identifiable {
               let name = data["name"] as? String,
               let email = data["email"] as? String,
               let gender = data["gender"] as? String,
-              let age = data["age"] as? Int,
+              let age = data["age"] as? Double,
               let height = data["height"] as? Double,
               let weight = data["weight"] as? Double,
               let fitnessGoal = data["fitnessGoal"] as? String,
+              let strengthExperience = data["strengthExperience"] as? String,
+              let experienceLevel = data["experienceLevel"] as? String,
+              let gymChallenge = data["gymChallenge"] as? String,
+              let strengthRoutine = data["strengthRoutine"] as? String,
+              let exerciseLocation = data["exerciseLocation"] as? String,
+              let workoutDuration = data["workoutDuration"] as? String,
+              let foodPreference = data["foodPreference"] as? String,
+              let isTakingMedications = data["isTakingMedications"] as? Bool,
+              let medications = data["medications"] as? String,
+              let hasInjuries = data["hasInjuries"] as? Bool,
+              let injuries = data["injuries"] as? String,
               let registrationDate = data["registrationDate"] as? Date else {
             return nil
         }
@@ -139,6 +218,17 @@ struct User: Codable, Identifiable {
             height: height,
             weight: weight,
             fitnessGoal: fitnessGoal,
+            strengthExperience: strengthExperience,
+            experienceLevel: experienceLevel,
+            gymChallenge: gymChallenge,
+            strengthRoutine: strengthRoutine,
+            exerciseLocation: exerciseLocation,
+            workoutDuration: workoutDuration,
+            foodPreference: foodPreference,
+            isTakingMedications: isTakingMedications,
+            medications: medications,
+            hasInjuries: hasInjuries,
+            injuries: injuries,
             registrationDate: registrationDate,
             currentRoutineId: currentRoutineId,
             goals: goals

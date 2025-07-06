@@ -148,7 +148,7 @@ struct DailyProgress: Codable, Identifiable {
     }
     
     // Static helper methods
-    private static func calculateCalorieTarget(age: Int, weight: Double, height: Double, gender: String, fitnessGoal: String) -> Double {
+    private static func calculateCalorieTarget(age: Double, weight: Double, height: Double, gender: String, fitnessGoal: String) -> Double {
         // Basic BMR calculation using Mifflin-St Jeor Equation
         let bmr: Double
         if gender == "male" {

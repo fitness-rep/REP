@@ -8,6 +8,7 @@ struct HealthInfoView: View {
     @State private var showMedicationTextField = false
     @State private var showInjuryTextField = false
     @State private var navigateToNext = false
+    @EnvironmentObject var registrationUser: RegistrationUser
     
     var body: some View {
         ScrollView {
@@ -291,7 +292,7 @@ struct HealthInfoView: View {
                 .padding(.horizontal, 32)
                 .padding(.bottom, 32)
                 
-                NavigationLink(destination: CalorieMacrosView(), isActive: $navigateToNext) {
+                NavigationLink(destination: RegistrationView().environmentObject(registrationUser), isActive: $navigateToNext) {
                     EmptyView()
                 }
             }
