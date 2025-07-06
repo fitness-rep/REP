@@ -306,6 +306,6 @@ struct MacroBreakdown {
     let fiberPercentage: Double
 }
 
-#Preview {
-    CalorieMacrosView()
-} 
+//#Preview {
+//    CalorieMacrosView()
+//} 

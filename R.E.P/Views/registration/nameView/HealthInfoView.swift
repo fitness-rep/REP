@@ -305,6 +305,6 @@ struct HealthInfoView: View {
     }
 }
 
-#Preview {
-    HealthInfoView()
-} 
+//#Preview {
+//    HealthInfoView()
+//} 

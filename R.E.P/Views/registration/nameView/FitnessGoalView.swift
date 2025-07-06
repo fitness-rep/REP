@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct FitnessGoalView: View {
-    @EnvironmentObject var registrationData: RegistrationData
+    @EnvironmentObject var registrationUser: RegistrationUser
     @State private var selectedGoal: FitnessGoal? = nil
     @State private var navigateToNext = false
     
@@ -24,7 +24,7 @@ struct FitnessGoalView: View {
                         isSelected: selectedGoal == goal
                     ) {
                         selectedGoal = goal
-                        registrationData.fitnessGoal = goal.displayName
+                        registrationUser.fitnessGoal = goal.displayName
                         navigateToNext = true
                     }
                 }
@@ -109,6 +109,6 @@ struct FitnessGoalOptionButton: View {
     }
 }
 
-#Preview {
-    FitnessGoalView().environmentObject(RegistrationData())
-} 
+//#Preview {
+//    FitnessGoalView().environmentObject(RegistrationUser())
+//} 

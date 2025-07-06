@@ -133,6 +133,6 @@ struct SchedulePreferenceCard: View {
     }
 }
 
-#Preview {
-    SchedulePreferenceView()
-} 
+//#Preview {
+//    SchedulePreferenceView()
+//} 

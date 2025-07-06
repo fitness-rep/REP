@@ -161,6 +161,6 @@ struct BenefitRow: View {
     }
 }
 
-#Preview {
-    FaceIDSetupView(authManager: FirebaseAuthManager())
-} 
+//#Preview {
+//    FaceIDSetupView(authManager: FirebaseAuthManager())
+//} 

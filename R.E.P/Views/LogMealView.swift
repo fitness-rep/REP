@@ -9,7 +9,7 @@ import SwiftUI
 
 struct LogMealView: View {
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject var dailyProgress: DailyProgress
+    @ObservedObject var dailyProgress: DailyProgressViewModel
     @State private var mealName = ""
     @State private var calories = ""
     @State private var selectedMealType = MealType.breakfast
@@ -206,6 +206,6 @@ struct MealTypeButton: View {
 
 
 
-#Preview {
-    LogMealView(dailyProgress: DailyProgress(userData: RegistrationData()))
-} 
+//#Preview {
+//    LogMealView(dailyProgress: DailyProgressViewModel(userId: "preview", date: Date(), userData: RegistrationUser()))
+//} 

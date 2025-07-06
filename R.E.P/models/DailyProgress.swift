@@ -6,14 +6,26 @@
 //
 
 import Foundation
-import SwiftUI
 
-class DailyProgress: ObservableObject {
-    @Published var caloriesConsumed: Double = 0.0
-    @Published var caloriesTarget: Double = 2000.0
-    @Published var workoutMinutesCompleted: Double = 0.0
-    @Published var workoutMinutesTarget: Double = 60.0
-    @Published var date: Date = Date()
+struct DailyProgress: Codable, Identifiable {
+    var id: String { documentId }
+    let documentId: String
+    let userId: String
+    let date: Date
+    let caloriesConsumed: Double
+    let caloriesTarget: Double
+    let workoutMinutesCompleted: Double
+    let workoutMinutesTarget: Double
+    
+    // Basic versioning for future extensibility
+    var schemaVersion: Int = 1
+    
+    // Static date formatter for Firestore queries
+    static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
     
     // Computed properties for progress calculations
     var caloriesProgress: Double {
@@ -32,14 +44,51 @@ class DailyProgress: ObservableObject {
         return max(workoutMinutesTarget - workoutMinutesCompleted, 0.0)
     }
     
-    // Initialize with user data
-    init(userData: RegistrationData) {
-        calculateTargets(for: userData)
+    // Manual dictionary conversion methods
+    func toDictionary() -> [String: Any] {
+        return [
+            "documentId": documentId,
+            "userId": userId,
+            "date": Self.dateFormatter.string(from: date),
+            "caloriesConsumed": caloriesConsumed,
+            "caloriesTarget": caloriesTarget,
+            "workoutMinutesCompleted": workoutMinutesCompleted,
+            "workoutMinutesTarget": workoutMinutesTarget,
+            "schemaVersion": schemaVersion
+        ]
     }
     
-    private func calculateTargets(for userData: RegistrationData) {
-        // Calculate calorie target based on user data
-        caloriesTarget = calculateCalorieTarget(
+    static func fromDictionary(_ data: [String: Any]) -> DailyProgress? {
+        guard let documentId = data["documentId"] as? String,
+              let userId = data["userId"] as? String,
+              let dateString = data["date"] as? String,
+              let date = dateFormatter.date(from: dateString),
+              let caloriesConsumed = data["caloriesConsumed"] as? Double,
+              let caloriesTarget = data["caloriesTarget"] as? Double,
+              let workoutMinutesCompleted = data["workoutMinutesCompleted"] as? Double,
+              let workoutMinutesTarget = data["workoutMinutesTarget"] as? Double else {
+            return nil
+        }
+        
+        return DailyProgress(
+            documentId: documentId,
+            userId: userId,
+            date: date,
+            caloriesConsumed: caloriesConsumed,
+            caloriesTarget: caloriesTarget,
+            workoutMinutesCompleted: workoutMinutesCompleted,
+            workoutMinutesTarget: workoutMinutesTarget
+        )
+    }
+    
+    // Initialize with user data
+    init(userId: String, date: Date, userData: RegistrationUser) {
+        self.documentId = "\(userId)_\(Self.dateFormatter.string(from: date))"
+        self.userId = userId
+        self.date = date
+        
+        // Calculate targets based on user data
+        self.caloriesTarget = Self.calculateCalorieTarget(
             age: userData.age,
             weight: userData.weight,
             height: userData.height,
@@ -47,14 +96,62 @@ class DailyProgress: ObservableObject {
             fitnessGoal: userData.fitnessGoal
         )
         
-        // Calculate workout target based on fitness goal
-        workoutMinutesTarget = calculateWorkoutTarget(fitnessGoal: userData.fitnessGoal)
+        self.workoutMinutesTarget = Self.calculateWorkoutTarget(fitnessGoal: userData.fitnessGoal)
+        
+        // Initialize with zero progress
+        self.caloriesConsumed = 0.0
+        self.workoutMinutesCompleted = 0.0
     }
     
-    private func calculateCalorieTarget(age: Int, weight: Double, height: Double, gender: Gender, fitnessGoal: String) -> Double {
+    // Initialize with existing data
+    init(documentId: String, userId: String, date: Date, caloriesConsumed: Double, caloriesTarget: Double, workoutMinutesCompleted: Double, workoutMinutesTarget: Double) {
+        self.documentId = documentId
+        self.userId = userId
+        self.date = date
+        self.caloriesConsumed = caloriesConsumed
+        self.caloriesTarget = caloriesTarget
+        self.workoutMinutesCompleted = workoutMinutesCompleted
+        self.workoutMinutesTarget = workoutMinutesTarget
+    }
+    
+    // Helper methods for creating updated instances
+    func withUpdatedCalories(_ newCalories: Double) -> DailyProgress {
+        return DailyProgress(
+            documentId: documentId,
+            userId: userId,
+            date: date,
+            caloriesConsumed: newCalories,
+            caloriesTarget: caloriesTarget,
+            workoutMinutesCompleted: workoutMinutesCompleted,
+            workoutMinutesTarget: workoutMinutesTarget
+        )
+    }
+    
+    func withUpdatedWorkoutMinutes(_ newMinutes: Double) -> DailyProgress {
+        return DailyProgress(
+            documentId: documentId,
+            userId: userId,
+            date: date,
+            caloriesConsumed: caloriesConsumed,
+            caloriesTarget: caloriesTarget,
+            workoutMinutesCompleted: newMinutes,
+            workoutMinutesTarget: workoutMinutesTarget
+        )
+    }
+    
+    func withAddedCalories(_ additionalCalories: Double) -> DailyProgress {
+        return withUpdatedCalories(caloriesConsumed + additionalCalories)
+    }
+    
+    func withAddedWorkoutMinutes(_ additionalMinutes: Double) -> DailyProgress {
+        return withUpdatedWorkoutMinutes(workoutMinutesCompleted + additionalMinutes)
+    }
+    
+    // Static helper methods
+    private static func calculateCalorieTarget(age: Int, weight: Double, height: Double, gender: String, fitnessGoal: String) -> Double {
         // Basic BMR calculation using Mifflin-St Jeor Equation
         let bmr: Double
-        if gender == .male {
+        if gender == "male" {
             bmr = (10 * weight) + (6.25 * height) - (5 * Double(age)) + 5
         } else {
             bmr = (10 * weight) + (6.25 * height) - (5 * Double(age)) - 161
@@ -83,7 +180,7 @@ class DailyProgress: ObservableObject {
         return round(dailyCalories)
     }
     
-    private func calculateWorkoutTarget(fitnessGoal: String) -> Double {
+    private static func calculateWorkoutTarget(fitnessGoal: String) -> Double {
         switch fitnessGoal.lowercased() {
         case "lose weight", "weight loss":
             return 75.0 // More cardio for weight loss
@@ -94,23 +191,5 @@ class DailyProgress: ObservableObject {
         default:
             return 60.0 // Default
         }
-    }
-    
-    // Methods to update progress
-    func logCalories(_ calories: Double) {
-        caloriesConsumed += calories
-        objectWillChange.send()
-    }
-    
-    func logWorkout(_ minutes: Double) {
-        workoutMinutesCompleted += minutes
-        objectWillChange.send()
-    }
-    
-    func resetDailyProgress() {
-        caloriesConsumed = 0.0
-        workoutMinutesCompleted = 0.0
-        date = Date()
-        objectWillChange.send()
     }
 } 

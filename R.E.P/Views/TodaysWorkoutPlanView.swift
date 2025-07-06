@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TodaysWorkoutPlanView: View {
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject var dailyProgress: DailyProgress
+    @ObservedObject var dailyProgress: DailyProgressViewModel
     @State private var showingLogWorkout = false
     
     // Sample workout plan data - in a real app, this would come from a database
@@ -230,6 +230,6 @@ struct WorkoutPlanItem {
     var isCompleted: Bool
 }
 
-#Preview {
-    TodaysWorkoutPlanView(dailyProgress: DailyProgress(userData: RegistrationData()))
-} 
+//#Preview {
+//    TodaysWorkoutPlanView(dailyProgress: DailyProgressViewModel(userId: "preview", date: Date(), userData: RegistrationUser()))
+//} 

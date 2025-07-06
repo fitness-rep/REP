@@ -25,12 +25,12 @@ class AuthViewModel: ObservableObject {
         try await authManager.signIn(email: email, password: password)
     }
     
-    func signUp(email: String, password: String) async throws {
-        try await authManager.signUp(email: email, password: password)
+    func signUp(email: String, password: String, registrationUser: RegistrationUser) async throws {
+        try await authManager.signUp(email: email, password: password, registrationUser: registrationUser)
     }
     
-    func registerUser(email: String, password: String) async throws {
-        try await authManager.signUp(email: email, password: password)
+    func registerUser(email: String, password: String, registrationUser: RegistrationUser) async throws {
+        try await authManager.signUp(email: email, password: password, registrationUser: registrationUser)
     }
     
     func signOut() {

@@ -396,6 +396,6 @@ struct AgeSlider: View {
     }
 }
 
-#Preview {
-    AgeSelectionView()
-} 
+//#Preview {
+//    AgeSelectionView()
+//} 

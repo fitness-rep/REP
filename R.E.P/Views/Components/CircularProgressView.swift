@@ -86,36 +86,36 @@ struct CircularProgressView: View {
 }
 
 // Preview
-#Preview {
-    ZStack {
-        Color.black.ignoresSafeArea()
-        
-        VStack(spacing: 20) {
-            CircularProgressView(
-                progress: 0.75,
-                title: "Calories",
-                value: "1,500",
-                subtitle: "of 2,000",
-                color: .blue
-            )
-            
-            CircularProgressView(
-                progress: 0.45,
-                title: "Workout",
-                value: "27",
-                subtitle: "of 60 min",
-                color: .green
-            )
-            
-            CircularProgressView(
-                progress: 0.60,
-                title: "Goal Progress",
-                value: "60%",
-                subtitle: "Complete",
-                color: .purple,
-                size: 160
-            )
-        }
-        .padding()
-    }
-} 
+//#Preview {
+//    ZStack {
+//        Color.black.ignoresSafeArea()
+//        
+//        VStack(spacing: 20) {
+//            CircularProgressView(
+//                progress: 0.75,
+//                title: "Calories",
+//                value: "1,500",
+//                subtitle: "of 2,000",
+//                color: .blue
+//            )
+//            
+//            CircularProgressView(
+//                progress: 0.45,
+//                title: "Workout",
+//                value: "27",
+//                subtitle: "of 60 min",
+//                color: .green
+//            )
+//            
+//            CircularProgressView(
+//                progress: 0.60,
+//                title: "Goal Progress",
+//                value: "60%",
+//                subtitle: "Complete",
+//                color: .purple,
+//                size: 160
+//            )
+//        }
+//        .padding()
+//    }
+//} 

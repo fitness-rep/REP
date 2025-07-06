@@ -121,6 +121,6 @@ struct ExperienceLevelCard: View {
     }
 }
 
-#Preview {
-    ExperienceLevelView()
-} 
+//#Preview {
+//    ExperienceLevelView()
+//} 

@@ -121,6 +121,6 @@ struct ExperienceOptionCard: View {
     }
 }
 
-#Preview {
-    StrengthExperienceView()
-} 
+//#Preview {
+//    StrengthExperienceView()
+//} 

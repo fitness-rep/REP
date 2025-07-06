@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct GenderSelectionView: View {
-    @EnvironmentObject var registrationData: RegistrationData
+    @EnvironmentObject var registrationUser: RegistrationUser
     @State private var selectedGender: Gender? = nil
     @State private var navigateToNameView = false
     
@@ -32,17 +32,17 @@ struct GenderSelectionView: View {
                         }
                         .padding(.horizontal, 16)
                         HStack(spacing: 28) {
-                            ForEach([Gender.male, Gender.female], id: \ .self) { gender in
+                            ForEach(["male", "female"], id: \.self) { gender in
                                 Button {
                                     withAnimation(.spring()) {
-                                        selectedGender = gender
-                                        registrationData.gender = gender
+                                        selectedGender = gender == "male" ? .male : .female
+                                        registrationUser.gender = gender
                                         navigateToNameView = true
                                     }
                                 } label: {
                                     GenderOptionCard(
-                                        gender: gender,
-                                        isSelected: selectedGender == gender
+                                        gender: gender == "male" ? .male : .female,
+                                        isSelected: selectedGender == (gender == "male" ? .male : .female)
                                     )
                                 }
                                 .buttonStyle(PlainButtonStyle())
@@ -53,7 +53,7 @@ struct GenderSelectionView: View {
                     }
                     Spacer()
                     // NavigationLink
-                    NavigationLink(destination: NameView().environmentObject(registrationData), isActive: $navigateToNameView) {
+                    NavigationLink(destination: NameView().environmentObject(registrationUser), isActive: $navigateToNameView) {
                         EmptyView()
                     }
                 }
@@ -62,4 +62,9 @@ struct GenderSelectionView: View {
         }
     }
 }
+
+//#Preview {
+//    GenderSelectionView()
+//        .environmentObject(RegistrationUser())
+//}
 

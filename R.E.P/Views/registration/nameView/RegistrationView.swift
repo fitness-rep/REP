@@ -3,6 +3,7 @@ import FirebaseAuth
 
 struct RegistrationView: View {
     @StateObject private var authViewModel = AuthViewModel()
+    @EnvironmentObject var registrationUser: RegistrationUser
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var confirmPassword: String = ""
@@ -212,13 +213,13 @@ struct RegistrationView: View {
                 .padding(.horizontal, 32)
                 .padding(.bottom, 40)
                 
-                // Register Button
-                Button(action: { registerUser() }) {
+                // Continue Button
+                Button(action: { continueToNextStep() }) {
                     HStack(spacing: 12) {
-                        Image(systemName: "person.badge.plus")
+                        Image(systemName: "arrow.right.circle.fill")
                             .font(.system(size: 18, weight: .semibold))
                         
-                        Text("Create Account")
+                        Text("Continue")
                             .font(.headline)
                             .fontWeight(.semibold)
                     }
@@ -240,7 +241,7 @@ struct RegistrationView: View {
                 .padding(.horizontal, 32)
                 .padding(.bottom, 32)
                 
-                NavigationLink(destination: HomeDashboardView(), isActive: $navigateToNext) {
+                NavigationLink(destination: GenderSelectionView().environmentObject(registrationUser), isActive: $navigateToNext) {
                     EmptyView()
                 }
             }
@@ -270,23 +271,16 @@ struct RegistrationView: View {
         isConfirmPasswordValid = password == confirmPassword && !confirmPassword.isEmpty
     }
     
-    private func registerUser() {
-        Task {
-            do {
-                try await authViewModel.registerUser(email: email, password: password)
-                DispatchQueue.main.async {
-                    navigateToNext = true
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    errorMessage = error.localizedDescription
-                    showError = true
-                }
-            }
-        }
+    private func continueToNextStep() {
+        // Update registration user with email
+        registrationUser.email = email
+        
+        // Navigate to the next step in registration flow
+        navigateToNext = true
     }
 }
 
-#Preview {
-    RegistrationView()
-} 
+//#Preview {
+//    RegistrationView()
+//        .environmentObject(RegistrationUser())
+//} 

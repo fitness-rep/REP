@@ -139,6 +139,6 @@ struct StrengthRoutineCard: View {
     }
 }
 
-#Preview {
-    StrengthRoutineView()
-} 
+//#Preview {
+//    StrengthRoutineView()
+//} 

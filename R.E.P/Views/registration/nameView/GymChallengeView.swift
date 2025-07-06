@@ -144,6 +144,6 @@ struct GymChallengeCard: View {
     }
 }
 
-#Preview {
-    GymChallengeView()
-} 
+//#Preview {
+//    GymChallengeView()
+//} 

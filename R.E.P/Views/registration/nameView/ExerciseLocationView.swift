@@ -125,6 +125,6 @@ struct ExerciseLocationCard: View {
     }
 }
 
-#Preview {
-    ExerciseLocationView()
-} 
+//#Preview {
+//    ExerciseLocationView()
+//} 

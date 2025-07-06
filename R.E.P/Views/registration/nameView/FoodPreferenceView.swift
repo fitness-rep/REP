@@ -177,6 +177,6 @@ struct FoodPreferenceCard: View {
     }
 }
 
-#Preview {
-    FoodPreferenceView()
-} 
+//#Preview {
+//    FoodPreferenceView()
+//} 

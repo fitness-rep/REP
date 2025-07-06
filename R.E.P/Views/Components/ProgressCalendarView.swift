@@ -86,7 +86,7 @@ struct ProgressCalendarView: View {
 }
 
 struct TodayProgressCard: View {
-    @ObservedObject var dailyProgress: DailyProgress
+    @ObservedObject var dailyProgress: DailyProgressViewModel
     
     var body: some View {
         VStack(spacing: 16) {

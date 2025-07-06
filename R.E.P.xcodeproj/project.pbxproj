@@ -12,6 +12,7 @@
 		2C4CBFB82E14E769007E476A /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 2C4CBFB72E14E769007E476A /* FirebaseDatabase */; };
 		2C4CBFBA2E14E769007E476A /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 2C4CBFB92E14E769007E476A /* FirebaseFirestore */; };
 		2C4CBFBC2E14E769007E476A /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 2C4CBFBB2E14E769007E476A /* FirebaseStorage */; };
+		2C9292972E1A183F003282BD /* FirebaseFirestoreCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 2C9292962E1A183F003282BD /* FirebaseFirestoreCombine-Community */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 				2C4CBFB82E14E769007E476A /* FirebaseDatabase in Frameworks */,
 				2C4CBFBA2E14E769007E476A /* FirebaseFirestore in Frameworks */,
 				2C4CBFB42E14E769007E476A /* FirebaseAnalytics in Frameworks */,
+				2C9292972E1A183F003282BD /* FirebaseFirestoreCombine-Community in Frameworks */,
 				2C4CBFBC2E14E769007E476A /* FirebaseStorage in Frameworks */,
 				2C4CBFB62E14E769007E476A /* FirebaseAuth in Frameworks */,
 			);
@@ -130,6 +132,7 @@
 				2C4CBFB72E14E769007E476A /* FirebaseDatabase */,
 				2C4CBFB92E14E769007E476A /* FirebaseFirestore */,
 				2C4CBFBB2E14E769007E476A /* FirebaseStorage */,
+				2C9292962E1A183F003282BD /* FirebaseFirestoreCombine-Community */,
 			);
 			productName = R.E.P;
 			productReference = 2C4CBEFC2E1262AC007E476A /* R.E.P.app */;
@@ -618,6 +621,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2C4CBFB22E14E769007E476A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		2C9292962E1A183F003282BD /* FirebaseFirestoreCombine-Community */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C4CBFB22E14E769007E476A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseFirestoreCombine-Community";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

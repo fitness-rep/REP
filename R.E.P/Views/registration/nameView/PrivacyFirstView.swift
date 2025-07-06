@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct PrivacyFirstView: View {
-    @EnvironmentObject var registrationData: RegistrationData
+    @EnvironmentObject var registrationUser: RegistrationUser
     @State private var agreedToPrivacy = false
     @State private var agreedToTerms = false
     @State private var navigateToFitnessGoal = false
@@ -67,7 +67,7 @@ struct PrivacyFirstView: View {
                     .disabled(!(agreedToPrivacy && agreedToTerms))
                     .padding(.horizontal, 40)
                     .padding(.bottom, 48)
-                    NavigationLink(destination: FitnessGoalView().environmentObject(registrationData), isActive: $navigateToFitnessGoal) {
+                    NavigationLink(destination: FitnessGoalView().environmentObject(registrationUser), isActive: $navigateToFitnessGoal) {
                         EmptyView()
                     }
                 }
@@ -114,9 +114,9 @@ struct CheckboxRow: View {
     }
 }
 
-#Preview {
-    PrivacyFirstView().environmentObject(RegistrationData())
-} 
+//#Preview {
+//    PrivacyFirstView().environmentObject(RegistrationUser())
+//} 
 
 
 

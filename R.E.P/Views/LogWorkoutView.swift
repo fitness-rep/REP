@@ -9,7 +9,7 @@ import SwiftUI
 
 struct LogWorkoutView: View {
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject var dailyProgress: DailyProgress
+    @ObservedObject var dailyProgress: DailyProgressViewModel
     @State private var workoutName = ""
     @State private var duration = ""
     @State private var selectedWorkoutType = WorkoutType.strength
@@ -206,6 +206,6 @@ struct WorkoutTypeButton: View {
 
 
 
-#Preview {
-    LogWorkoutView(dailyProgress: DailyProgress(userData: RegistrationData()))
-} 
+//#Preview {
+//    LogWorkoutView(dailyProgress: DailyProgressViewModel(userId: "preview", date: Date(), userData: RegistrationUser()))
+//} 

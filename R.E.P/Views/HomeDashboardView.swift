@@ -3,15 +3,15 @@ import SwiftUI
 struct HomeDashboardView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @State private var selectedTab = 0
-    @StateObject private var dailyProgress: DailyProgress
+    @StateObject private var dailyProgress: DailyProgressViewModel
     @State private var showingLogMeal = false
     @State private var showingLogWorkout = false
     
     // Initialize with user data
     init() {
         // We'll need to get user data from somewhere - for now using default
-        let userData = RegistrationData()
-        _dailyProgress = StateObject(wrappedValue: DailyProgress(userData: userData))
+        let userData = RegistrationUser()
+        _dailyProgress = StateObject(wrappedValue: DailyProgressViewModel(userId: "default", date: Date(), userData: userData))
     }
     
     // Calculate overall goal progress (average of calories and workout progress)
@@ -434,7 +434,8 @@ extension DateFormatter {
     }()
 }
 
-#Preview {
-    HomeDashboardView()
-        .environmentObject(AuthViewModel())
-} 
+//#Preview {
+//    HomeDashboardView()
+//        .environmentObject(AuthViewModel())
+//        .environmentObject(RegistrationUser())
+//} 

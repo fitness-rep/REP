@@ -40,7 +40,7 @@ struct HomeView: View {
                         // Action Buttons
                         VStack(spacing: 20) {
                             // Get Started Button
-                            NavigationLink(destination: GenderSelectionView().environmentObject(RegistrationData())) {
+                            NavigationLink(destination: GenderSelectionView().environmentObject(RegistrationUser())) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "figure.run")
                                         .font(.title2)
@@ -491,4 +491,5 @@ struct HomeButtonStyle: ButtonStyle {
 #Preview {
     HomeView()
         .environmentObject(AuthViewModel())
+        .environmentObject(RegistrationUser())
 }

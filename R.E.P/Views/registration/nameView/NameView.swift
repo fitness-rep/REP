@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct NameView: View {
-    @EnvironmentObject var registrationData: RegistrationData
+    @EnvironmentObject var registrationUser: RegistrationUser
     @State private var navigateToPrivacy = false
     @FocusState private var isFocused: Bool
     
@@ -27,13 +27,13 @@ struct NameView: View {
                     .padding(.bottom, 36)
                     // Floating Label TextField
                     ZStack(alignment: .leading) {
-                        if registrationData.name.isEmpty && !isFocused {
+                        if registrationUser.name.isEmpty && !isFocused {
                             Text("Your name")
                                 .foregroundColor(.gray)
                                 .font(.system(size: 18, weight: .medium))
                                 .padding(.leading, 22)
                         }
-                        TextField("", text: $registrationData.name)
+                        TextField("", text: $registrationUser.name)
                             .focused($isFocused)
                             .foregroundColor(.white)
                             .font(.system(size: 20, weight: .semibold))
@@ -73,12 +73,12 @@ struct NameView: View {
                             )
                             .cornerRadius(32)
                             .shadow(color: .purple.opacity(0.3), radius: 12, x: 0, y: 6)
-                            .opacity(registrationData.name.isEmpty ? 0.5 : 1.0)
+                            .opacity(registrationUser.name.isEmpty ? 0.5 : 1.0)
                     }
-                    .disabled(registrationData.name.isEmpty)
+                    .disabled(registrationUser.name.isEmpty)
                     .padding(.horizontal, 40)
                     .padding(.bottom, 48)
-                    NavigationLink(destination: PrivacyFirstView().environmentObject(registrationData), isActive: $navigateToPrivacy) {
+                    NavigationLink(destination: PrivacyFirstView().environmentObject(registrationUser), isActive: $navigateToPrivacy) {
                         EmptyView()
                     }
                 }
@@ -86,3 +86,8 @@ struct NameView: View {
         }
     }
 }
+
+//#Preview {
+//    NameView()
+//        .environmentObject(RegistrationUser())
+//}
