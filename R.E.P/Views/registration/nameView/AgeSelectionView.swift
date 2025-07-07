@@ -471,14 +471,13 @@ struct ScrollableRulerPicker: View {
     let tickSpacing: CGFloat = 16
     let majorTickHeight: CGFloat = 32
     let minorTickHeight: CGFloat = 16
-    let fadeWidth: CGFloat = 48
+    let fadeWidth: CGFloat = 50
 
     @State private var scrollOffset: CGFloat = 0
     @GestureState private var dragOffset: CGFloat = 0
     @State private var isDragging: Bool = false
 
     private var totalTicks: Int { Int((maxValue - minValue) / step) + 1 }
-    private var totalWidth: CGFloat { CGFloat(totalTicks - 1) * tickSpacing + width }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -495,7 +494,7 @@ struct ScrollableRulerPicker: View {
             .padding(.bottom, 8)
 
             ZStack {
-                // Ruler
+                // Ruler with fading edges
                 ScrollView(.horizontal, showsIndicators: false) {
                     ZStack(alignment: .topLeading) {
                         HStack(spacing: 0) {
@@ -532,7 +531,13 @@ struct ScrollableRulerPicker: View {
                             let tickFloat = -totalDrag / tickSpacing
                             let nearestTick = round(tickFloat)
                             let newValue = min(max(minValue, minValue + nearestTick * step), maxValue)
-                            self.value = newValue
+                            
+                            // Ensure we snap to whole numbers for age
+                            if unit == "years" {
+                                self.value = round(newValue)
+                            } else {
+                                self.value = newValue
+                            }
                         }
                         .onEnded { value in
                             isDragging = false
@@ -546,26 +551,31 @@ struct ScrollableRulerPicker: View {
                             let clampedScrollOffset = min(maxScrollOffset, max(minScrollOffset, newScrollOffset))
                             
                             withAnimation(.spring()) {
-                                self.value = newValue
+                                // Ensure we snap to whole numbers for age
+                                if unit == "years" {
+                                    self.value = round(newValue)
+                                } else {
+                                    self.value = newValue
+                                }
                                 scrollOffset = clampedScrollOffset
                             }
                         }
                 )
-                                        .onAppear {
-                            // Center the initial value
-                            let initialOffset = -CGFloat((value - minValue) / step) * tickSpacing
-                            let maxScrollOffset: CGFloat = 0
-                            let minScrollOffset = -CGFloat((maxValue - minValue) / step) * tickSpacing
-                            scrollOffset = min(maxScrollOffset, max(minScrollOffset, initialOffset))
-                        }
-                        .onChange(of: value) { newValue in
-                            if !isDragging {
-                                let newOffset = -CGFloat((newValue - minValue) / step) * tickSpacing
-                                let maxScrollOffset: CGFloat = 0
-                                let minScrollOffset = -CGFloat((maxValue - minValue) / step) * tickSpacing
-                                scrollOffset = min(maxScrollOffset, max(minScrollOffset, newOffset))
-                            }
-                        }
+                .onAppear {
+                    // Center the initial value
+                    let initialOffset = -CGFloat((value - minValue) / step) * tickSpacing
+                    let maxScrollOffset: CGFloat = 0
+                    let minScrollOffset = -CGFloat((maxValue - minValue) / step) * tickSpacing
+                    scrollOffset = min(maxScrollOffset, max(minScrollOffset, initialOffset))
+                }
+                .onChange(of: value) { newValue in
+                    if !isDragging {
+                        let newOffset = -CGFloat((newValue - minValue) / step) * tickSpacing
+                        let maxScrollOffset: CGFloat = 0
+                        let minScrollOffset = -CGFloat((maxValue - minValue) / step) * tickSpacing
+                        scrollOffset = min(maxScrollOffset, max(minScrollOffset, newOffset))
+                    }
+                }
 
                 // Center highlight line
                 Rectangle()
@@ -573,7 +583,27 @@ struct ScrollableRulerPicker: View {
                     .frame(width: 2, height: majorTickHeight + 16)
                     .position(x: width/2, y: (majorTickHeight + 24)/2)
 
-                // Fading edges removed for cleaner appearance
+                // Fading edges
+                HStack {
+                    // Left fade
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color.black.opacity(0.6), Color.clear]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                    .frame(width: fadeWidth)
+                    
+                    Spacer()
+                    
+                    // Right fade
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.6)]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                    .frame(width: fadeWidth)
+                }
+                .frame(height: majorTickHeight + 24)
             }
         }
     }

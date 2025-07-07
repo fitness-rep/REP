@@ -34,36 +34,44 @@ struct TargetWeightView: View {
         ScrollView {
             VStack(spacing: 0) {
                 // Target Weight Section
-                VStack(spacing: 24) {
-                    Text("What's your target weight?")
-                        .font(.title2)
-                        .bold()
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.primary)
-                        .padding(.top, 40)
-                    
-                    // Unit toggle button
-                    Button(action: { weightUnit = weightUnit == .kg ? .lbs : .kg }) {
-                        HStack(spacing: 8) {
-                            Image(systemName: weightUnit == .kg ? "scalemass" : "scalemass.fill")
-                                .font(.system(size: 16, weight: .medium))
-                            Text("Switch to \(weightUnit == .kg ? "Pounds" : "Kilograms")")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
+                VStack(spacing: 20) {
+                    HStack {
+                        Text("What's your target weight?")
+                            .font(.title2)
+                            .bold()
+                            .foregroundColor(.primary)
+                        
+                        Spacer()
+                        
+                        // Unit toggle button
+                        Button(action: { 
+                            if weightUnit == .kg {
+                                // Convert kg to lbs
+                                targetWeight = targetWeight * 2.20462
+                                weightUnit = .lbs
+                            } else {
+                                // Convert lbs to kg
+                                targetWeight = targetWeight / 2.20462
+                                weightUnit = .kg
+                            }
+                        }) {
+                            Text(weightUnit == .kg ? "lbs" : "kg")
+                                .font(.caption)
+                                .foregroundColor(weightUnit == .kg ? .orange : .red)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill((weightUnit == .kg ? Color.orange : Color.red).opacity(0.1))
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke((weightUnit == .kg ? Color.orange : Color.red).opacity(0.3), lineWidth: 1)
+                                )
                         }
-                        .foregroundColor(.orange)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(Color.orange.opacity(0.1))
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .stroke(Color.orange.opacity(0.3), lineWidth: 1)
-                        )
                     }
-                    .padding(.bottom, 20)
+                    .padding(.horizontal, 32)
+                    .padding(.top, 40)
                     
                     // Ruler picker for target weight
                     ScrollableRulerPicker(

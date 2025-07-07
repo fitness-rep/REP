@@ -20,17 +20,18 @@ struct TrainingFocusView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            Text("Which areas should your training focus on?")
+            Text("What areas need improvement?")
                 .font(.title2)
                 .fontWeight(.bold)
                 .multilineTextAlignment(.center)
+                .foregroundColor(.white)
                 .padding(.top, 20)
                 .padding(.bottom, 20)
                 .padding(.horizontal, 24)
             
             Spacer(minLength: 16)
             
-            LazyVGrid(columns: columns, spacing: 6) {
+            LazyVGrid(columns: columns, spacing: 8) {
                 ForEach(TrainingArea.allCases, id: \ .self) { area in
                     TrainingFocusCard(area: area, isSelected: selectedAreas.contains(area)) {
                         if selectedAreas.contains(area) {
@@ -41,11 +42,10 @@ struct TrainingFocusView: View {
                     }
                 }
             }
-            .frame(maxHeight: 420) // 4 rows * (card+spacing) = 4*96+3*12 = 420
             .padding(.horizontal, 4)
-            .padding(.bottom, 8)
+            .padding(.bottom, 20)
             
-            Spacer()
+            Spacer(minLength: 20)
             
             Button(action: { 
                 navigateToNext = true
@@ -71,7 +71,7 @@ struct TrainingFocusView: View {
             }
         }
         .frame(maxHeight: .infinity, alignment: .top)
-        .background(Color(.systemBackground))
+        .background(Color.black)
     }
 }
 
@@ -111,16 +111,16 @@ struct TrainingFocusCard: View {
             VStack(spacing: 6) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(Color.white)
+                        .fill(Color.black)
                         .frame(width: 120, height: 120)
-                        .shadow(color: isSelected ? Color.purple.opacity(0.18) : Color.black.opacity(0.06), radius: 8, x: 0, y: 4)
+                        .shadow(color: isSelected ? Color.purple.opacity(0.3) : Color.white.opacity(0.1), radius: 8, x: 0, y: 4)
                         .overlay(
                             RoundedRectangle(cornerRadius: 20, style: .continuous)
                                 .stroke(
                                     isSelected ?
                                         AnyShapeStyle(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]), startPoint: .topLeading, endPoint: .bottomTrailing))
-                                        : AnyShapeStyle(Color.clear),
-                                    lineWidth: 3
+                                        : AnyShapeStyle(Color.white.opacity(0.2)),
+                                    lineWidth: 2
                                 )
                         )
                     if area == .fullBody {
@@ -138,8 +138,12 @@ struct TrainingFocusCard: View {
                     }
                 }
                 Text(area.label)
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundColor(.primary)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.8)
+                    .frame(height: 20)
             }
         }
         .buttonStyle(PlainButtonStyle())
@@ -298,3 +302,5 @@ struct HighlightLegs: View {
         }
     }
 }
+
+
