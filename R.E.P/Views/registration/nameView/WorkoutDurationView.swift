@@ -9,6 +9,20 @@ struct WorkoutDurationView: View {
     @State private var navigateToNext = false
     @EnvironmentObject var registrationUser: RegistrationUser
     
+    // Helper function to convert Date to HH:mm string
+    private func dateToString(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: date)
+    }
+    
+    // Helper function to convert HH:mm string to Date
+    private func stringToDate(_ timeString: String) -> Date {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.date(from: timeString) ?? Calendar.current.date(from: DateComponents(hour: 6, minute: 0)) ?? Date()
+    }
+    
     let minValue: Double = 0
     let maxValue: Double = 120
     let step: Double = 5
@@ -167,6 +181,8 @@ struct WorkoutDurationView: View {
                 Button(action: {
                     navigateToNext = true
                     registrationUser.workoutDuration = workoutDuration
+                    registrationUser.trainingWindowStart = dateToString(startTime)
+                    registrationUser.trainingWindowEnd = dateToString(endTime)
                     registrationUser.printProperties(context: "WorkoutDurationView -> AgeSelectionView")
                 }) {
                     Text("Continue")

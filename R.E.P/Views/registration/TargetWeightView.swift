@@ -91,7 +91,12 @@ struct TargetWeightView: View {
                 .padding(.bottom, 40)
                 
                 // Continue button
-                Button(action: { navigateToNext = true }) {
+                Button(action: { 
+                    navigateToNext = true
+                    registrationUser.targetWeight = targetWeight
+                    registrationUser.targetWeightUnit = weightUnit.rawValue
+                    registrationUser.printProperties(context: "TargetWeightView -> TrainingFocusView")
+                }) {
                     Text("Continue")
                         .font(.headline)
                         .foregroundColor(.white)

@@ -228,11 +228,11 @@ class FirestoreService: ObservableObject {
         var query = db.collection("activityLogs").whereField("userId", isEqualTo: userId)
         
         if let startDate = startDate {
-            query = query.whereField("timestamp", isGreaterThanOrEqualTo: startDate)
+            query = query.whereField("timestamp", isGreaterThanOrEqualTo: Timestamp(date: startDate))
         }
         
         if let endDate = endDate {
-            query = query.whereField("timestamp", isLessThanOrEqualTo: endDate)
+            query = query.whereField("timestamp", isLessThanOrEqualTo: Timestamp(date: endDate))
         }
         
         let snapshot = try await query.getDocuments()

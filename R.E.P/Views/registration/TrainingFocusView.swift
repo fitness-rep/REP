@@ -47,7 +47,11 @@ struct TrainingFocusView: View {
             
             Spacer()
             
-            Button(action: { navigateToNext = true }) {
+            Button(action: { 
+                navigateToNext = true
+                registrationUser.trainingFocusAreas = Set(selectedAreas.map { $0.rawValue })
+                registrationUser.printProperties(context: "TrainingFocusView -> FoodPreferenceView")
+            }) {
                 Text("Continue")
                     .font(.headline)
                     .foregroundColor(.white)

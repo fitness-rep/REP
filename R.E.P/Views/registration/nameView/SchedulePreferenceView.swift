@@ -163,6 +163,19 @@ struct SchedulePreferenceView: View {
             // Continue button
             Button(action: {
                 navigateToNext = true
+                
+                // Save schedule preference data
+                registrationUser.scheduleType = selectedTab == .smart ? "smart" : "fixed"
+                
+                if selectedTab == .smart {
+                    registrationUser.smartScheduleWorkoutsPerWeek = selectedSmart
+                    registrationUser.fixedScheduleDays = nil
+                } else {
+                    registrationUser.smartScheduleWorkoutsPerWeek = nil
+                    registrationUser.fixedScheduleDays = selectedDays
+                }
+                
+                registrationUser.printProperties(context: "SchedulePreferenceView -> WorkoutDurationView")
             }) {
                 Text("Continue")
                     .font(.headline)

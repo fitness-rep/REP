@@ -34,7 +34,7 @@ struct StrengthRoutineView: View {
             Spacer()
             Button(action: {
                 navigateToNext = true
-                registrationUser.strengthRoutine = selectedRoutines.first?.rawValue ?? ""
+                registrationUser.strengthRoutine = selectedRoutines
                 registrationUser.printProperties(context: "Strength Routine View - Exercise Location")
             }) {
                 Text("Continue")
@@ -59,7 +59,7 @@ struct StrengthRoutineView: View {
     }
 }
 
-enum StrengthRoutine: String, CaseIterable, Hashable {
+enum StrengthRoutine: String, CaseIterable, Hashable, Codable {
     case consistent = "I strength train consistently"
     case struggle = "I struggle with consistency"
     case reestablishing = "I am reestablishing a routine"

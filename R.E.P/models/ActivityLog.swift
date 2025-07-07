@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FirebaseFirestore
 
 struct ActivityLog: Codable, Identifiable {
     var id: String { documentId }
@@ -30,7 +31,7 @@ struct ActivityLog: Codable, Identifiable {
             "documentId": documentId,
             "userId": userId,
             "activityType": activityType.rawValue,
-            "timestamp": timestamp,
+            "timestamp": Timestamp(date: timestamp),
             "schemaVersion": schemaVersion
         ]
         
@@ -57,9 +58,19 @@ struct ActivityLog: Codable, Identifiable {
         guard let documentId = data["documentId"] as? String,
               let userId = data["userId"] as? String,
               let activityTypeString = data["activityType"] as? String,
-              let activityType = ActivityType(rawValue: activityTypeString),
-              let timestamp = data["timestamp"] as? Date else {
+              let activityType = ActivityType(rawValue: activityTypeString) else {
             return nil
+        }
+        
+        // Handle timestamp that might come from Firestore as Timestamp
+        let timestamp: Date
+        if let firestoreTimestamp = data["timestamp"] as? Timestamp {
+            timestamp = firestoreTimestamp.dateValue()
+        } else if let date = data["timestamp"] as? Date {
+            timestamp = date
+        } else {
+            // Default to current date if not available
+            timestamp = Date()
         }
         
         let duration = data["duration"] as? TimeInterval

@@ -34,11 +34,8 @@ struct GymChallengeView: View {
             Spacer()
             Button(action: {
                 navigateToNext = true
-                registrationUser.gymChallenge = selectedChallenges.first?.rawValue ?? ""
+                registrationUser.gymChallenge = selectedChallenges
                 registrationUser.printProperties(context: "Gym Challenge View - Strength Routine")
-
-                
-                
             }) {
                 Text("Continue")
                     .font(.headline)
@@ -62,7 +59,7 @@ struct GymChallengeView: View {
     }
 }
 
-enum GymChallenge: String, CaseIterable, Hashable {
+enum GymChallenge: String, CaseIterable, Hashable, Codable {
     case motivation = "Staying motivated and consistent"
     case guidance = "Not getting enough guidance"
     case interesting = "Keeping my workouts interesting"

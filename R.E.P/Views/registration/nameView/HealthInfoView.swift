@@ -275,7 +275,14 @@ struct HealthInfoView: View {
                 .padding(.bottom, 40)
                 
                 // Continue button
-                Button(action: { navigateToNext = true }) {
+                Button(action: { 
+                    navigateToNext = true 
+                    registrationUser.isTakingMedications = isTakingMedications ?? false
+                    registrationUser.hasInjuries = hasInjuries ?? false
+                    registrationUser.medications = medications
+                    registrationUser.injuries = injuries
+                    registrationUser.printProperties(context: "HealthInfoView -> RegistrationView")
+                    }) {
                     Text("Continue")
                         .font(.headline)
                         .foregroundColor(.white)

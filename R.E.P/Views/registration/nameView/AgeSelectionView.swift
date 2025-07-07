@@ -211,7 +211,9 @@ struct AgeSelectionView: View {
                     registrationUser.age = age
                     registrationUser.weight = weight
                     registrationUser.height = height
-                    registrationUser.printProperties(context: "AgeSelectionView -> FoodPreferenceView")
+                    registrationUser.heightUnit = heightUnit.rawValue
+                    registrationUser.weightUnit = weightUnit.rawValue
+                    registrationUser.printProperties(context: "AgeSelectionView -> TargetWeightView")
                 }) {
                     Text("Continue")
                         .font(.title3)
@@ -237,8 +239,8 @@ struct AgeSelectionView: View {
 
 
 // Height Unit Enum
-enum HeightUnit: CaseIterable {
-    case cm, feet
+enum HeightUnit: String, CaseIterable {
+    case cm = "cm", feet = "feet"
     
     var displayText: String {
         switch self {
@@ -249,8 +251,8 @@ enum HeightUnit: CaseIterable {
 }
 
 // Weight Unit Enum
-enum WeightUnit: CaseIterable {
-    case kg, lbs
+enum WeightUnit: String, CaseIterable {
+    case kg = "kg", lbs = "lbs"
     
     var displayText: String {
         switch self {
