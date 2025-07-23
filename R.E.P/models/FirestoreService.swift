@@ -211,41 +211,77 @@ class FirestoreService: ObservableObject {
         try await db.collection("routines").document(id).delete()
     }
     
-    // MARK: - Activity Log Operations
-    
+    // MARK: - Goal Operations
+    func createGoal(_ goal: Goal) async throws {
+        let goalData = goal.toDictionary()
+        try await db.collection("goals").document(goal.goalId).setData(goalData)
+    }
+    func getGoal(id: String) async throws -> Goal? {
+        let document = try await db.collection("goals").document(id).getDocument()
+        guard let data = document.data() else { return nil }
+        return Goal.fromDictionary(data)
+    }
+    func getUserGoals(userId: String) async throws -> [Goal] {
+        let snapshot = try await db.collection("goals").whereField("userId", isEqualTo: userId).getDocuments()
+        return snapshot.documents.compactMap { Goal.fromDictionary($0.data()) }
+    }
+    func updateGoal(_ goal: Goal) async throws {
+        let goalData = goal.toDictionary()
+        try await db.collection("goals").document(goal.goalId).setData(goalData, merge: true)
+    }
+    func deleteGoal(id: String) async throws {
+        try await db.collection("goals").document(id).delete()
+    }
+    // MARK: - Attribute Log Operations
+    func createAttributeLog(_ log: AttributeLog) async throws {
+        let logData = log.toDictionary()
+        try await db.collection("attributeLogs").document(log.logId).setData(logData)
+    }
+    func getAttributeLog(id: String) async throws -> AttributeLog? {
+        let document = try await db.collection("attributeLogs").document(id).getDocument()
+        guard let data = document.data() else { return nil }
+        return AttributeLog.fromDictionary(data)
+    }
+    func getUserAttributeLogs(userId: String, goalId: String? = nil) async throws -> [AttributeLog] {
+        var query: Query = db.collection("attributeLogs").whereField("userId", isEqualTo: userId)
+        if let goalId = goalId {
+            query = query.whereField("goalId", isEqualTo: goalId)
+        }
+        let snapshot = try await query.getDocuments()
+        return snapshot.documents.compactMap { AttributeLog.fromDictionary($0.data()) }
+    }
+    func updateAttributeLog(_ log: AttributeLog) async throws {
+        let logData = log.toDictionary()
+        try await db.collection("attributeLogs").document(log.logId).setData(logData, merge: true)
+    }
+    func deleteAttributeLog(id: String) async throws {
+        try await db.collection("attributeLogs").document(id).delete()
+    }
+    // MARK: - Activity Log Operations (updated)
     func createActivityLog(_ log: ActivityLog) async throws {
         let logData = log.toDictionary()
-        try await db.collection("activityLogs").document(log.documentId).setData(logData)
+        try await db.collection("activityLogs").document(log.logId).setData(logData)
     }
-    
     func getActivityLog(id: String) async throws -> ActivityLog? {
         let document = try await db.collection("activityLogs").document(id).getDocument()
         guard let data = document.data() else { return nil }
         return ActivityLog.fromDictionary(data)
     }
-    
-    func getUserActivityLogs(userId: String, startDate: Date? = nil, endDate: Date? = nil) async throws -> [ActivityLog] {
-        var query = db.collection("activityLogs").whereField("userId", isEqualTo: userId)
-        
-        if let startDate = startDate {
-            query = query.whereField("timestamp", isGreaterThanOrEqualTo: Timestamp(date: startDate))
+    func getUserActivityLogs(userId: String, goalId: String? = nil, routineId: String? = nil) async throws -> [ActivityLog] {
+        var query: Query = db.collection("activityLogs").whereField("userId", isEqualTo: userId)
+        if let goalId = goalId {
+            query = query.whereField("goalId", isEqualTo: goalId)
         }
-        
-        if let endDate = endDate {
-            query = query.whereField("timestamp", isLessThanOrEqualTo: Timestamp(date: endDate))
+        if let routineId = routineId {
+            query = query.whereField("routineId", isEqualTo: routineId)
         }
-        
         let snapshot = try await query.getDocuments()
-        return snapshot.documents.compactMap { document in
-            ActivityLog.fromDictionary(document.data())
-        }
+        return snapshot.documents.compactMap { ActivityLog.fromDictionary($0.data()) }
     }
-    
     func updateActivityLog(_ log: ActivityLog) async throws {
         let logData = log.toDictionary()
-        try await db.collection("activityLogs").document(log.documentId).setData(logData, merge: true)
+        try await db.collection("activityLogs").document(log.logId).setData(logData, merge: true)
     }
-    
     func deleteActivityLog(id: String) async throws {
         try await db.collection("activityLogs").document(id).delete()
     }

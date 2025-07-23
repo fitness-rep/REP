@@ -17,7 +17,8 @@ struct Routine: Codable, Identifiable {
     let mealPlanId: String
     let goalStartDate: Date
     let createdAt: Date
-    let isActive: Bool
+    var goalId: String?
+    var isActive: Bool?
     let currentDay: Int
     let settings: RoutineSettings?
     let progress: RoutineProgress?
@@ -37,7 +38,7 @@ struct Routine: Codable, Identifiable {
             "mealPlanId": mealPlanId,
             "goalStartDate": goalStartDate,
             "createdAt": createdAt,
-            "isActive": isActive,
+            "isActive": isActive as Any,
             "currentDay": currentDay,
             "schemaVersion": schemaVersion
         ]
@@ -69,6 +70,7 @@ struct Routine: Codable, Identifiable {
             return nil
         }
         
+        let goalId = data["goalId"] as? String
         let settingsData = data["settings"] as? [String: Any]
         let settings = settingsData.flatMap { RoutineSettings.fromDictionary($0) }
         
@@ -87,6 +89,7 @@ struct Routine: Codable, Identifiable {
             mealPlanId: mealPlanId,
             goalStartDate: goalStartDate,
             createdAt: createdAt,
+            goalId: goalId,
             isActive: isActive,
             currentDay: currentDay,
             settings: settings,
