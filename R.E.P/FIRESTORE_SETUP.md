@@ -63,19 +63,34 @@ foods/{foodId}
 ```
 routines/{routineId}
 ├── documentId: string
-├── userId: string
+├── goalId: string (optional)
 ├── name: string
 ├── description: string
-├── exercisePlanId: string
-├── mealPlanId: string
-├── goalStartDate: timestamp
+├── startDate: timestamp
 ├── createdAt: timestamp
 ├── isActive: boolean
-├── currentDay: number
+├── dailySchedule: array
 ├── settings: object (optional)
 ├── progress: object (optional)
 ├── customizations: object (optional)
 └── schemaVersion: number
+```
+
+**Daily Schedule Structure:**
+```
+dailySchedule: [
+  {
+    "activityId": string,
+    "name": string,
+    "startTime": string,
+    "endTime": string,
+    "activityType": string,
+    "referenceId": string (optional),
+    "description": string (optional),
+    "isRequired": boolean,
+    "order": number
+  }
+]
 ```
 
 ### 6. Activity Logs Collection

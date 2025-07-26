@@ -87,7 +87,7 @@ class RegistrationUser: ObservableObject {
             heightUnit: heightUnit,
             weightUnit: weightUnit,
             registrationDate: Date(),
-            currentRoutineId: nil,
+
             isAdmin: false,
             goalId: nil
         )
@@ -205,7 +205,6 @@ struct User: Codable, Identifiable {
     let weightUnit: String // "kg" or "lbs"
     
     let registrationDate: Date
-    var currentRoutineId: String?
     let isAdmin: Bool
     let goalId: String?
     
@@ -245,7 +244,6 @@ struct User: Codable, Identifiable {
             "heightUnit": heightUnit,
             "weightUnit": weightUnit,
             "registrationDate": Timestamp(date: registrationDate),
-            "currentRoutineId": currentRoutineId as Any,
             "isAdmin": isAdmin,
             "goalId": goalId as Any,
             "schemaVersion": schemaVersion
@@ -298,7 +296,7 @@ struct User: Codable, Identifiable {
             StrengthRoutine(rawValue: string)
         })
         
-        let currentRoutineId = data["currentRoutineId"] as? String
+
         
         // Handle new fields with defaults
         let targetWeight = data["targetWeight"] as? Double ?? 70.0
@@ -352,7 +350,6 @@ struct User: Codable, Identifiable {
             heightUnit: heightUnit,
             weightUnit: weightUnit,
             registrationDate: registrationDate,
-            currentRoutineId: currentRoutineId,
             isAdmin: isAdmin,
             goalId: goalId
         )

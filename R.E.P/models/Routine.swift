@@ -10,19 +10,16 @@ import Foundation
 struct Routine: Codable, Identifiable {
     var id: String { documentId }
     let documentId: String
-    let userId: String
+    let goalId: String?
     let name: String
     let description: String
-    let exercisePlanId: String
-    let mealPlanId: String
-    let goalStartDate: Date
+    let startDate: Date
     let createdAt: Date
-    var goalId: String?
     var isActive: Bool?
-    let currentDay: Int
     let settings: RoutineSettings?
     let progress: RoutineProgress?
     let customizations: RoutineCustomizations?
+    let dailySchedule: [DailyActivity]
     
     // Basic versioning for future extensibility
     let schemaVersion: Int = 1
@@ -31,15 +28,13 @@ struct Routine: Codable, Identifiable {
     func toDictionary() -> [String: Any] {
         var dict: [String: Any] = [
             "documentId": documentId,
-            "userId": userId,
+            "goalId": goalId as Any,
             "name": name,
             "description": description,
-            "exercisePlanId": exercisePlanId,
-            "mealPlanId": mealPlanId,
-            "goalStartDate": goalStartDate,
+            "startDate": startDate,
             "createdAt": createdAt,
             "isActive": isActive as Any,
-            "currentDay": currentDay,
+            "dailySchedule": dailySchedule.map { $0.toDictionary() },
             "schemaVersion": schemaVersion
         ]
         
@@ -58,18 +53,13 @@ struct Routine: Codable, Identifiable {
     
     static func fromDictionary(_ data: [String: Any]) -> Routine? {
         guard let documentId = data["documentId"] as? String,
-              let userId = data["userId"] as? String,
               let name = data["name"] as? String,
               let description = data["description"] as? String,
-              let exercisePlanId = data["exercisePlanId"] as? String,
-              let mealPlanId = data["mealPlanId"] as? String,
-              let goalStartDate = data["goalStartDate"] as? Date,
+              let startDate = data["startDate"] as? Date,
               let createdAt = data["createdAt"] as? Date,
-              let isActive = data["isActive"] as? Bool,
-              let currentDay = data["currentDay"] as? Int else {
+              let isActive = data["isActive"] as? Bool else {
             return nil
         }
-        
         let goalId = data["goalId"] as? String
         let settingsData = data["settings"] as? [String: Any]
         let settings = settingsData.flatMap { RoutineSettings.fromDictionary($0) }
@@ -80,23 +70,95 @@ struct Routine: Codable, Identifiable {
         let customizationsData = data["customizations"] as? [String: Any]
         let customizations = customizationsData.flatMap { RoutineCustomizations.fromDictionary($0) }
         
+        let dailyScheduleData = data["dailySchedule"] as? [[String: Any]] ?? []
+        let dailySchedule = dailyScheduleData.compactMap { DailyActivity.fromDictionary($0) }
+        
         return Routine(
             documentId: documentId,
-            userId: userId,
+            goalId: goalId,
             name: name,
             description: description,
-            exercisePlanId: exercisePlanId,
-            mealPlanId: mealPlanId,
-            goalStartDate: goalStartDate,
+            startDate: startDate,
             createdAt: createdAt,
-            goalId: goalId,
             isActive: isActive,
-            currentDay: currentDay,
             settings: settings,
             progress: progress,
-            customizations: customizations
+            customizations: customizations,
+            dailySchedule: dailySchedule
         )
     }
+}
+
+struct DailyActivity: Codable, Identifiable {
+    var id: String { activityId }
+    let activityId: String
+    let name: String
+    let startTime: String              // "06:00", "08:00", "10:00"
+    let endTime: String                // "08:00", "10:00", "12:00"
+    let activityType: DailyActivityType
+    let referenceId: String?           // mealPlanId, exercisePlanId, or nil for generic
+    let description: String?
+    let isRequired: Bool
+    let order: Int
+    
+    // Manual dictionary conversion methods
+    func toDictionary() -> [String: Any] {
+        var dict: [String: Any] = [
+            "activityId": activityId,
+            "name": name,
+            "startTime": startTime,
+            "endTime": endTime,
+            "activityType": activityType.rawValue,
+            "isRequired": isRequired,
+            "order": order
+        ]
+        
+        if let referenceId = referenceId {
+            dict["referenceId"] = referenceId
+        }
+        if let description = description {
+            dict["description"] = description
+        }
+        
+        return dict
+    }
+    
+    static func fromDictionary(_ data: [String: Any]) -> DailyActivity? {
+        guard let activityId = data["activityId"] as? String,
+              let name = data["name"] as? String,
+              let startTime = data["startTime"] as? String,
+              let endTime = data["endTime"] as? String,
+              let activityTypeString = data["activityType"] as? String,
+              let activityType = DailyActivityType(rawValue: activityTypeString),
+              let isRequired = data["isRequired"] as? Bool,
+              let order = data["order"] as? Int else {
+            return nil
+        }
+        
+        let referenceId = data["referenceId"] as? String
+        let description = data["description"] as? String
+        
+        return DailyActivity(
+            activityId: activityId,
+            name: name,
+            startTime: startTime,
+            endTime: endTime,
+            activityType: activityType,
+            referenceId: referenceId,
+            description: description,
+            isRequired: isRequired,
+            order: order
+        )
+    }
+}
+
+enum DailyActivityType: String, Codable, CaseIterable {
+    case meal = "meal"                 // References mealPlanId
+    case exercise = "exercise"         // References exercisePlanId  
+    case generic = "generic"           // Wake up, work, sleep, etc.
+    case rest = "rest"                 // Rest periods
+    case work = "work"                 // Work periods
+    case sleep = "sleep"               // Sleep periods
 }
 
 struct RoutineSettings: Codable {

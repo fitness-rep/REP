@@ -4,7 +4,7 @@ import FirebaseFirestore
 struct Goal: Codable, Identifiable {
     var id: String { goalId }
     let goalId: String
-    let userId: String
+    let userId: String?
     let type: String // e.g., "weight_loss", "weight_gain", "stay_fit"
     let description: String
     let targetValue: Double?
@@ -24,7 +24,7 @@ struct Goal: Codable, Identifiable {
     func toDictionary() -> [String: Any] {
         var dict: [String: Any] = [
             "goalId": goalId,
-            "userId": userId,
+            "userId": userId as Any,
             "type": type,
             "description": description,
             "targetValue": targetValue as Any,
@@ -46,7 +46,6 @@ struct Goal: Codable, Identifiable {
 
     static func fromDictionary(_ data: [String: Any]) -> Goal? {
         guard let goalId = data["goalId"] as? String,
-              let userId = data["userId"] as? String,
               let type = data["type"] as? String,
               let description = data["description"] as? String,
               let durationWeeks = data["durationWeeks"] as? Int,
@@ -57,6 +56,7 @@ struct Goal: Codable, Identifiable {
               let createdAtRaw = data["createdAt"],
               let updatedAtRaw = data["updatedAt"],
               let progress = data["progress"] as? Double else { return nil }
+        let userId = data["userId"] as? String
         let targetValue = data["targetValue"] as? Double
         let targetRange = data["targetRange"] as? [String: Double]
         let targetPerWeek = data["targetPerWeek"] as? Double

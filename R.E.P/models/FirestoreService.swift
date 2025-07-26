@@ -32,11 +32,7 @@ class FirestoreService: ObservableObject {
         try await db.collection("users").document(user.uid).setData(userData, merge: true)
     }
     
-    func updateUserCurrentRoutine(uid: String, routineId: String?) async throws {
-        try await db.collection("users").document(uid).updateData([
-            "currentRoutineId": routineId as Any
-        ])
-    }
+
     
     func updateUserGoal(uid: String, goalId: String?) async throws {
         try await db.collection("users").document(uid).updateData([
@@ -238,9 +234,9 @@ class FirestoreService: ObservableObject {
         return Routine.fromDictionary(data)
     }
     
-    func getUserRoutines(userId: String) async throws -> [Routine] {
+    func getGoalRoutines(goalId: String) async throws -> [Routine] {
         let snapshot = try await db.collection("routines")
-            .whereField("userId", isEqualTo: userId)
+            .whereField("goalId", isEqualTo: goalId)
             .getDocuments()
         
         return snapshot.documents.compactMap { document in
@@ -248,15 +244,37 @@ class FirestoreService: ObservableObject {
         }
     }
     
-    func getActiveRoutine(userId: String) async throws -> Routine? {
+    func getUnassignedRoutines() async throws -> [Routine] {
         let snapshot = try await db.collection("routines")
-            .whereField("userId", isEqualTo: userId)
+            .getDocuments()
+        
+        return snapshot.documents.compactMap { document in
+            let routine = Routine.fromDictionary(document.data())
+            // Filter for routines where goalId is nil
+            return routine?.goalId == nil ? routine : nil
+        }
+    }
+    
+    func getActiveRoutine(goalId: String) async throws -> Routine? {
+        let snapshot = try await db.collection("routines")
+            .whereField("goalId", isEqualTo: goalId)
             .whereField("isActive", isEqualTo: true)
             .limit(to: 1)
             .getDocuments()
         
         return snapshot.documents.first.flatMap { document in
             Routine.fromDictionary(document.data())
+        }
+    }
+    
+    func getUnassignedGoals() async throws -> [Goal] {
+        let snapshot = try await db.collection("goals")
+            .getDocuments()
+        
+        return snapshot.documents.compactMap { document in
+            let goal = Goal.fromDictionary(document.data())
+            // Filter for goals where userId is nil
+            return goal?.userId == nil ? goal : nil
         }
     }
     
@@ -271,11 +289,7 @@ class FirestoreService: ObservableObject {
         ])
     }
     
-    func updateRoutineCurrentDay(id: String, currentDay: Int) async throws {
-        try await db.collection("routines").document(id).updateData([
-            "currentDay": currentDay
-        ])
-    }
+
     
     func deleteRoutine(id: String) async throws {
         try await db.collection("routines").document(id).delete()

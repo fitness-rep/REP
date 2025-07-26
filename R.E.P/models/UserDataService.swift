@@ -119,7 +119,6 @@ class UserDataService: ObservableObject {
                 heightUnit: currentUser.heightUnit,
                 weightUnit: currentUser.weightUnit,
                 registrationDate: currentUser.registrationDate,
-                currentRoutineId: currentUser.currentRoutineId,
                 isAdmin: currentUser.isAdmin,
                 goalId: currentUser.goalId,
                 schemaVersion: currentUser.schemaVersion
@@ -158,7 +157,6 @@ class UserDataService: ObservableObject {
                 heightUnit: currentUser.heightUnit,
                 weightUnit: currentUser.weightUnit,
                 registrationDate: currentUser.registrationDate,
-                currentRoutineId: currentUser.currentRoutineId,
                 isAdmin: currentUser.isAdmin,
                 goalId: currentUser.goalId,
                 schemaVersion: currentUser.schemaVersion
@@ -197,7 +195,6 @@ class UserDataService: ObservableObject {
                 heightUnit: currentUser.heightUnit,
                 weightUnit: currentUser.weightUnit,
                 registrationDate: currentUser.registrationDate,
-                currentRoutineId: currentUser.currentRoutineId,
                 isAdmin: currentUser.isAdmin,
                 goalId: currentUser.goalId,
                 schemaVersion: currentUser.schemaVersion
@@ -236,7 +233,6 @@ class UserDataService: ObservableObject {
                 heightUnit: currentUser.heightUnit,
                 weightUnit: currentUser.weightUnit,
                 registrationDate: currentUser.registrationDate,
-                currentRoutineId: currentUser.currentRoutineId,
                 isAdmin: currentUser.isAdmin,
                 goalId: currentUser.goalId,
                 schemaVersion: currentUser.schemaVersion
@@ -275,7 +271,6 @@ class UserDataService: ObservableObject {
                 heightUnit: currentUser.heightUnit,
                 weightUnit: currentUser.weightUnit,
                 registrationDate: currentUser.registrationDate,
-                currentRoutineId: currentUser.currentRoutineId,
                 isAdmin: currentUser.isAdmin,
                 goalId: currentUser.goalId,
                 schemaVersion: currentUser.schemaVersion
@@ -286,51 +281,7 @@ class UserDataService: ObservableObject {
         self.currentUser = updatedUser
     }
     
-    func updateUserCurrentRoutine(routineId: String?) async throws {
-        guard let currentUser = currentUser else { return }
-        
-        try await firestoreService.updateUserCurrentRoutine(uid: currentUser.uid, routineId: routineId)
-        
-        // Update local user data
-        let updatedUser = User(
-            uid: currentUser.uid,
-            name: currentUser.name,
-            email: currentUser.email,
-            gender: currentUser.gender,
-            age: currentUser.age,
-            height: currentUser.height,
-            weight: currentUser.weight,
-            fitnessGoal: currentUser.fitnessGoal,
-            strengthExperience: currentUser.strengthExperience,
-            experienceLevel: currentUser.experienceLevel,
-            gymChallenge: currentUser.gymChallenge,
-            strengthRoutine: currentUser.strengthRoutine,
-            exerciseLocation: currentUser.exerciseLocation,
-            workoutDuration: currentUser.workoutDuration,
-            trainingWindowStart: currentUser.trainingWindowStart,
-            trainingWindowEnd: currentUser.trainingWindowEnd,
-            foodPreference: currentUser.foodPreference,
-            isTakingMedications: currentUser.isTakingMedications,
-            medications: currentUser.medications,
-            hasInjuries: currentUser.hasInjuries,
-            injuries: currentUser.injuries,
-            targetWeight: currentUser.targetWeight,
-            targetWeightUnit: currentUser.targetWeightUnit,
-            trainingFocusAreas: currentUser.trainingFocusAreas,
-            scheduleType: currentUser.scheduleType,
-            smartScheduleWorkoutsPerWeek: currentUser.smartScheduleWorkoutsPerWeek,
-            fixedScheduleDays: currentUser.fixedScheduleDays,
-            heightUnit: currentUser.heightUnit,
-            weightUnit: currentUser.weightUnit,
-            registrationDate: currentUser.registrationDate,
-            currentRoutineId: routineId,
-            isAdmin: currentUser.isAdmin,
-            goalId: currentUser.goalId,
-            schemaVersion: currentUser.schemaVersion
-        )
-        
-        self.currentUser = updatedUser
-    }
+
     
     func updateUserGoal(goalId: String?) async throws {
         guard let currentUser = currentUser else { return }
@@ -369,7 +320,6 @@ class UserDataService: ObservableObject {
             heightUnit: currentUser.heightUnit,
             weightUnit: currentUser.weightUnit,
             registrationDate: currentUser.registrationDate,
-            currentRoutineId: currentUser.currentRoutineId,
             isAdmin: currentUser.isAdmin,
             goalId: goalId,
             schemaVersion: currentUser.schemaVersion
