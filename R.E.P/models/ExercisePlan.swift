@@ -5,6 +5,9 @@
 //  Created by KISHORE BANDARU on 7/5/25.
 //
 
+import Foundation
+import FirebaseFirestore
+
 struct ExercisePlan: Codable, Identifiable {
     var id: String { documentId }
     let documentId: String
@@ -46,10 +49,12 @@ struct ExercisePlan: Codable, Identifiable {
 }
 
 struct Exercise: Codable, Identifiable {
-    var id: String { name }
-    let name: String
-    let type: ExerciseType
+    var id: String { "\(templateId)_\(progression.first?.order ?? 0)" }
+    let templateId: String  // Reference to ExerciseTemplate
     let progression: [ExerciseProgression]
+    
+    // Computed property to get template info (will be fetched separately)
+    var template: ExerciseTemplate?
     
     // Basic versioning for future extensibility
     let schemaVersion: Int = 1
@@ -57,17 +62,14 @@ struct Exercise: Codable, Identifiable {
     // Manual dictionary conversion methods
     func toDictionary() -> [String: Any] {
         return [
-            "name": name,
-            "type": type.rawValue,
+            "templateId": templateId,
             "progression": progression.map { $0.toDictionary() },
             "schemaVersion": schemaVersion
         ]
     }
     
     static func fromDictionary(_ data: [String: Any]) -> Exercise? {
-        guard let name = data["name"] as? String,
-              let typeString = data["type"] as? String,
-              let type = ExerciseType(rawValue: typeString) else {
+        guard let templateId = data["templateId"] as? String else {
             return nil
         }
         
@@ -75,9 +77,108 @@ struct Exercise: Codable, Identifiable {
         let progression = progressionData.compactMap { ExerciseProgression.fromDictionary($0) }
         
         return Exercise(
+            templateId: templateId,
+            progression: progression
+        )
+    }
+}
+
+struct ExerciseTemplate: Codable, Identifiable {
+    var id: String { templateId }
+    let templateId: String
+    let name: String
+    let type: ExerciseType
+    let description: String?
+    let muscleGroups: [String]?
+    let equipment: [String]?
+    let difficulty: String?
+    let instructions: String?
+    let videoUrl: String?
+    let imageUrl: String?
+    let isActive: Bool
+    let createdBy: String?
+    let createdAt: Date
+    
+    // Basic versioning for future extensibility
+    let schemaVersion: Int = 1
+    
+    func toDictionary() -> [String: Any] {
+        var dict: [String: Any] = [
+            "templateId": templateId,
+            "name": name,
+            "type": type.rawValue,
+            "isActive": isActive,
+            "createdAt": Timestamp(date: createdAt),
+            "schemaVersion": schemaVersion
+        ]
+        
+        if let description = description {
+            dict["description"] = description
+        }
+        if let muscleGroups = muscleGroups {
+            dict["muscleGroups"] = muscleGroups
+        }
+        if let equipment = equipment {
+            dict["equipment"] = equipment
+        }
+        if let difficulty = difficulty {
+            dict["difficulty"] = difficulty
+        }
+        if let instructions = instructions {
+            dict["instructions"] = instructions
+        }
+        if let videoUrl = videoUrl {
+            dict["videoUrl"] = videoUrl
+        }
+        if let imageUrl = imageUrl {
+            dict["imageUrl"] = imageUrl
+        }
+        if let createdBy = createdBy {
+            dict["createdBy"] = createdBy
+        }
+        
+        return dict
+    }
+    
+    static func fromDictionary(_ data: [String: Any]) -> ExerciseTemplate? {
+        guard let templateId = data["templateId"] as? String,
+              let name = data["name"] as? String,
+              let typeString = data["type"] as? String,
+              let type = ExerciseType(rawValue: typeString),
+              let isActive = data["isActive"] as? Bool else {
+            return nil
+        }
+        
+        let description = data["description"] as? String
+        let muscleGroups = data["muscleGroups"] as? [String]
+        let equipment = data["equipment"] as? [String]
+        let difficulty = data["difficulty"] as? String
+        let instructions = data["instructions"] as? String
+        let videoUrl = data["videoUrl"] as? String
+        let imageUrl = data["imageUrl"] as? String
+        let createdBy = data["createdBy"] as? String
+        
+        let createdAt: Date
+        if let timestamp = data["createdAt"] as? Timestamp {
+            createdAt = timestamp.dateValue()
+        } else {
+            createdAt = Date()
+        }
+        
+        return ExerciseTemplate(
+            templateId: templateId,
             name: name,
             type: type,
-            progression: progression
+            description: description,
+            muscleGroups: muscleGroups,
+            equipment: equipment,
+            difficulty: difficulty,
+            instructions: instructions,
+            videoUrl: videoUrl,
+            imageUrl: imageUrl,
+            isActive: isActive,
+            createdBy: createdBy,
+            createdAt: createdAt
         )
     }
 }

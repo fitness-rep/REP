@@ -86,6 +86,70 @@ class FirestoreService: ObservableObject {
         try await db.collection("exercisePlans").document(id).delete()
     }
     
+    // MARK: - Exercise Template Operations
+    
+    func createExerciseTemplate(_ template: ExerciseTemplate) async throws {
+        let templateData = template.toDictionary()
+        try await db.collection("exerciseTemplates").document(template.templateId).setData(templateData)
+    }
+    
+    func getExerciseTemplate(id: String) async throws -> ExerciseTemplate? {
+        let document = try await db.collection("exerciseTemplates").document(id).getDocument()
+        guard let data = document.data() else { return nil }
+        return ExerciseTemplate.fromDictionary(data)
+    }
+    
+    func getExerciseTemplates(type: ExerciseType? = nil, isActive: Bool = true) async throws -> [ExerciseTemplate] {
+        var query: Query = db.collection("exerciseTemplates").whereField("isActive", isEqualTo: isActive)
+        
+        if let type = type {
+            query = query.whereField("type", isEqualTo: type.rawValue)
+        }
+        
+        let snapshot = try await query.getDocuments()
+        return snapshot.documents.compactMap { ExerciseTemplate.fromDictionary($0.data()) }
+    }
+    
+    func updateExerciseTemplate(_ template: ExerciseTemplate) async throws {
+        let templateData = template.toDictionary()
+        try await db.collection("exerciseTemplates").document(template.templateId).setData(templateData, merge: true)
+    }
+    
+    func deleteExerciseTemplate(id: String) async throws {
+        try await db.collection("exerciseTemplates").document(id).delete()
+    }
+    
+    // Helper function to fetch template for an exercise
+    func getExerciseWithTemplate(_ exercise: Exercise) async throws -> Exercise {
+        var updatedExercise = exercise
+        updatedExercise.template = try await getExerciseTemplate(id: exercise.templateId)
+        return updatedExercise
+    }
+    
+    // Helper function to fetch templates for all exercises in a plan
+    func getExercisePlanWithTemplates(_ plan: ExercisePlan) async throws -> ExercisePlan {
+        let exercisesWithTemplates = try await withThrowingTaskGroup(of: Exercise.self) { group in
+            for exercise in plan.exercises {
+                group.addTask {
+                    return try await self.getExerciseWithTemplate(exercise)
+                }
+            }
+            
+            var results: [Exercise] = []
+            for try await exercise in group {
+                results.append(exercise)
+            }
+            return results.sorted { $0.templateId < $1.templateId }
+        }
+        
+        return ExercisePlan(
+            documentId: plan.documentId,
+            createdBy: plan.createdBy,
+            description: plan.description,
+            exercises: exercisesWithTemplates
+        )
+    }
+    
     // MARK: - Meal Plan Operations
     
     func createMealPlan(_ plan: MealPlan) async throws {
@@ -326,6 +390,8 @@ class FirestoreService: ObservableObject {
     func deleteDailyProgress(id: String) async throws {
         try await db.collection("dailyProgress").document(id).delete()
     }
+    
+
 }
 
 // MARK: - Supporting Types
