@@ -88,7 +88,8 @@ class RegistrationUser: ObservableObject {
             weightUnit: weightUnit,
             registrationDate: Date(),
             currentRoutineId: nil,
-            goals: []
+            isAdmin: false,
+            goalId: nil
         )
     }
     
@@ -205,7 +206,8 @@ struct User: Codable, Identifiable {
     
     let registrationDate: Date
     var currentRoutineId: String?
-    var goals: [Goal]
+    let isAdmin: Bool
+    let goalId: String?
     
     // Basic versioning for future extensibility
     var schemaVersion: Int = 1
@@ -244,7 +246,8 @@ struct User: Codable, Identifiable {
             "weightUnit": weightUnit,
             "registrationDate": Timestamp(date: registrationDate),
             "currentRoutineId": currentRoutineId as Any,
-            "goals": goals.map { $0.toDictionary() },
+            "isAdmin": isAdmin,
+            "goalId": goalId as Any,
             "schemaVersion": schemaVersion
         ]
     }
@@ -282,19 +285,20 @@ struct User: Codable, Identifiable {
         } else {
             registrationDate = Date()
         }
+        
         // Handle gymChallenge conversion from array of strings to Set<GymChallenge>
         let gymChallengeStrings = data["gymChallenge"] as? [String] ?? []
         let gymChallenge: Set<GymChallenge> = Set(gymChallengeStrings.compactMap { string in
             GymChallenge(rawValue: string)
         })
+        
         // Handle strengthRoutine conversion from array of strings to Set<StrengthRoutine>
         let strengthRoutineStrings = data["strengthRoutine"] as? [String] ?? []
         let strengthRoutine: Set<StrengthRoutine> = Set(strengthRoutineStrings.compactMap { string in
             StrengthRoutine(rawValue: string)
         })
+        
         let currentRoutineId = data["currentRoutineId"] as? String
-        let goalsData = data["goals"] as? [[String: Any]] ?? []
-        let goals = goalsData.compactMap { Goal.fromDictionary($0) }
         
         // Handle new fields with defaults
         let targetWeight = data["targetWeight"] as? Double ?? 70.0
@@ -310,6 +314,12 @@ struct User: Codable, Identifiable {
         
         let heightUnit = data["heightUnit"] as? String ?? "cm"
         let weightUnit = data["weightUnit"] as? String ?? "kg"
+        
+        // Handle isAdmin field with default false
+        let isAdmin = data["isAdmin"] as? Bool ?? false
+        
+        // Handle goalId field with default nil
+        let goalId = data["goalId"] as? String
         
         return User(
             uid: uid,
@@ -343,7 +353,8 @@ struct User: Codable, Identifiable {
             weightUnit: weightUnit,
             registrationDate: registrationDate,
             currentRoutineId: currentRoutineId,
-            goals: goals
+            isAdmin: isAdmin,
+            goalId: goalId
         )
     }
 }

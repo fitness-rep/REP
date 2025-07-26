@@ -9,52 +9,94 @@ import Foundation
 import FirebaseFirestore
 
 struct ActivityLog: Codable, Identifiable {
-    var id: String { logId }
-    let logId: String
+    var id: String { documentId }
+    let documentId: String
     let userId: String
-    let goalId: String
-    let routineId: String
-    let date: Date
-    let activityType: String // e.g., "exercise", "meal"
-    let activityId: String // Reference to the specific activity or meal
-    let status: String // e.g., "completed", "skipped"
+    let activityType: ActivityType
+    let timestamp: Date
+    let duration: TimeInterval?
+    
+    // Basic versioning for future extensibility
     var schemaVersion: Int = 1
-
+    
+    // Activity-specific data
+    let workoutLog: WorkoutLog?
+    let mealLog: MealLog?
+    let customActivityLog: CustomActivityLog?
+    let deviceDataLog: DeviceDataLog?
+    
+    // Manual dictionary conversion methods
     func toDictionary() -> [String: Any] {
-        return [
-            "logId": logId,
+        var dict: [String: Any] = [
+            "documentId": documentId,
             "userId": userId,
-            "goalId": goalId,
-            "routineId": routineId,
-            "date": Timestamp(date: date),
-            "activityType": activityType,
-            "activityId": activityId,
-            "status": status,
+            "activityType": activityType.rawValue,
+            "timestamp": Timestamp(date: timestamp),
             "schemaVersion": schemaVersion
         ]
+        
+        if let duration = duration {
+            dict["duration"] = duration
+        }
+        if let workoutLog = workoutLog {
+            dict["workoutLog"] = workoutLog.toDictionary()
+        }
+        if let mealLog = mealLog {
+            dict["mealLog"] = mealLog.toDictionary()
+        }
+        if let customActivityLog = customActivityLog {
+            dict["customActivityLog"] = customActivityLog.toDictionary()
+        }
+        if let deviceDataLog = deviceDataLog {
+            dict["deviceDataLog"] = deviceDataLog.toDictionary()
+        }
+        
+        return dict
     }
-
+    
     static func fromDictionary(_ data: [String: Any]) -> ActivityLog? {
-        guard let logId = data["logId"] as? String,
+        guard let documentId = data["documentId"] as? String,
               let userId = data["userId"] as? String,
-              let goalId = data["goalId"] as? String,
-              let routineId = data["routineId"] as? String,
-              let dateRaw = data["date"],
-              let activityType = data["activityType"] as? String,
-              let activityId = data["activityId"] as? String,
-              let status = data["status"] as? String else { return nil }
-        let schemaVersion = data["schemaVersion"] as? Int ?? 1
-        let date = (dateRaw as? Timestamp)?.dateValue() ?? (dateRaw as? Date) ?? Date()
+              let activityTypeString = data["activityType"] as? String,
+              let activityType = ActivityType(rawValue: activityTypeString) else {
+            return nil
+        }
+        
+        // Handle timestamp that might come from Firestore as Timestamp
+        let timestamp: Date
+        if let firestoreTimestamp = data["timestamp"] as? Timestamp {
+            timestamp = firestoreTimestamp.dateValue()
+        } else if let date = data["timestamp"] as? Date {
+            timestamp = date
+        } else {
+            // Default to current date if not available
+            timestamp = Date()
+        }
+        
+        let duration = data["duration"] as? TimeInterval
+        
+        let workoutLogData = data["workoutLog"] as? [String: Any]
+        let workoutLog = workoutLogData.flatMap { WorkoutLog.fromDictionary($0) }
+        
+        let mealLogData = data["mealLog"] as? [String: Any]
+        let mealLog = mealLogData.flatMap { MealLog.fromDictionary($0) }
+        
+        let customActivityLogData = data["customActivityLog"] as? [String: Any]
+        let customActivityLog = customActivityLogData.flatMap { CustomActivityLog.fromDictionary($0) }
+        
+        let deviceDataLogData = data["deviceDataLog"] as? [String: Any]
+        let deviceDataLog = deviceDataLogData.flatMap { DeviceDataLog.fromDictionary($0) }
+        
         return ActivityLog(
-            logId: logId,
+            documentId: documentId,
             userId: userId,
-            goalId: goalId,
-            routineId: routineId,
-            date: date,
             activityType: activityType,
-            activityId: activityId,
-            status: status,
-            schemaVersion: schemaVersion
+            timestamp: timestamp,
+            duration: duration,
+            workoutLog: workoutLog,
+            mealLog: mealLog,
+            customActivityLog: customActivityLog,
+            deviceDataLog: deviceDataLog
         )
     }
 }

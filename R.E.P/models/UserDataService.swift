@@ -120,7 +120,8 @@ class UserDataService: ObservableObject {
                 weightUnit: currentUser.weightUnit,
                 registrationDate: currentUser.registrationDate,
                 currentRoutineId: currentUser.currentRoutineId,
-                goals: currentUser.goals,
+                isAdmin: currentUser.isAdmin,
+                goalId: currentUser.goalId,
                 schemaVersion: currentUser.schemaVersion
             )
         }
@@ -158,7 +159,8 @@ class UserDataService: ObservableObject {
                 weightUnit: currentUser.weightUnit,
                 registrationDate: currentUser.registrationDate,
                 currentRoutineId: currentUser.currentRoutineId,
-                goals: currentUser.goals,
+                isAdmin: currentUser.isAdmin,
+                goalId: currentUser.goalId,
                 schemaVersion: currentUser.schemaVersion
             )
         }
@@ -196,7 +198,8 @@ class UserDataService: ObservableObject {
                 weightUnit: currentUser.weightUnit,
                 registrationDate: currentUser.registrationDate,
                 currentRoutineId: currentUser.currentRoutineId,
-                goals: currentUser.goals,
+                isAdmin: currentUser.isAdmin,
+                goalId: currentUser.goalId,
                 schemaVersion: currentUser.schemaVersion
             )
         }
@@ -234,7 +237,8 @@ class UserDataService: ObservableObject {
                 weightUnit: currentUser.weightUnit,
                 registrationDate: currentUser.registrationDate,
                 currentRoutineId: currentUser.currentRoutineId,
-                goals: currentUser.goals,
+                isAdmin: currentUser.isAdmin,
+                goalId: currentUser.goalId,
                 schemaVersion: currentUser.schemaVersion
             )
         }
@@ -272,7 +276,8 @@ class UserDataService: ObservableObject {
                 weightUnit: currentUser.weightUnit,
                 registrationDate: currentUser.registrationDate,
                 currentRoutineId: currentUser.currentRoutineId,
-                goals: currentUser.goals,
+                isAdmin: currentUser.isAdmin,
+                goalId: currentUser.goalId,
                 schemaVersion: currentUser.schemaVersion
             )
         }
@@ -319,17 +324,18 @@ class UserDataService: ObservableObject {
             weightUnit: currentUser.weightUnit,
             registrationDate: currentUser.registrationDate,
             currentRoutineId: routineId,
-            goals: currentUser.goals,
+            isAdmin: currentUser.isAdmin,
+            goalId: currentUser.goalId,
             schemaVersion: currentUser.schemaVersion
         )
         
         self.currentUser = updatedUser
     }
     
-    func updateUserGoals(goals: [Goal]) async throws {
+    func updateUserGoal(goalId: String?) async throws {
         guard let currentUser = currentUser else { return }
         
-        try await firestoreService.updateUserGoals(uid: currentUser.uid, goals: goals)
+        try await firestoreService.updateUserGoal(uid: currentUser.uid, goalId: goalId)
         
         // Update local user data
         let updatedUser = User(
@@ -364,12 +370,15 @@ class UserDataService: ObservableObject {
             weightUnit: currentUser.weightUnit,
             registrationDate: currentUser.registrationDate,
             currentRoutineId: currentUser.currentRoutineId,
-            goals: goals,
+            isAdmin: currentUser.isAdmin,
+            goalId: goalId,
             schemaVersion: currentUser.schemaVersion
         )
         
         self.currentUser = updatedUser
     }
+    
+
     
     // MARK: - User Data Retrieval
     

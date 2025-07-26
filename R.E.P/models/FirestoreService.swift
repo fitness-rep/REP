@@ -38,6 +38,12 @@ class FirestoreService: ObservableObject {
         ])
     }
     
+    func updateUserGoal(uid: String, goalId: String?) async throws {
+        try await db.collection("users").document(uid).updateData([
+            "goalId": goalId as Any
+        ])
+    }
+    
     func updateUserGoals(uid: String, goals: [Goal]) async throws {
         let goalsData = goals.map { $0.toDictionary() }
         try await db.collection("users").document(uid).updateData([
@@ -260,7 +266,7 @@ class FirestoreService: ObservableObject {
     // MARK: - Activity Log Operations (updated)
     func createActivityLog(_ log: ActivityLog) async throws {
         let logData = log.toDictionary()
-        try await db.collection("activityLogs").document(log.logId).setData(logData)
+        try await db.collection("activityLogs").document(log.documentId).setData(logData)
     }
     func getActivityLog(id: String) async throws -> ActivityLog? {
         let document = try await db.collection("activityLogs").document(id).getDocument()
@@ -280,7 +286,7 @@ class FirestoreService: ObservableObject {
     }
     func updateActivityLog(_ log: ActivityLog) async throws {
         let logData = log.toDictionary()
-        try await db.collection("activityLogs").document(log.logId).setData(logData, merge: true)
+        try await db.collection("activityLogs").document(log.documentId).setData(logData, merge: true)
     }
     func deleteActivityLog(id: String) async throws {
         try await db.collection("activityLogs").document(id).delete()
